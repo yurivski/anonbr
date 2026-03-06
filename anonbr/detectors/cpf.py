@@ -40,17 +40,48 @@ class DetectorCPF:
         for _, f_start, f_end, _ in formatted_results:
             if not (end <= f_start or start >= f_end):
                 return True
-        re False
+        return False
 
-    def _validate(self, cpf: str):
+    def _validate(self, cpf: str) -> bool:
+        """Valida CPF usando algoritmo de digítos vefificadores e rejeita CPFs
+            conhecidos como inválidos (todos iguais, etc)
+        """
+        # Remove pontuação:
+        numbers = re.sub(r'\D', '', cpf)
 
-    
+        if len(numbers) != 11:
+            return False
 
-    def mask(self, cpf: str):
+        # Rejeita sequências conhecidas como inválidas:
+        if numbers == numbers[0] * 11:
+            return False
 
+        # Calcula primeiro dígito verificador:
+        sum_gigits = sum(int(numbers[i]) * (11 - 1) for i in range(10))
+        second_digit = (sum_gigits * 10 % 11) % 10
 
-    def detect_cpf(text: str):
+        return int(numbers[10]) == second_digit
 
+    def mask(self, cpf: str, level: str = 'standard') -> str:
+        # Mascara CPF preservando formato original.
+        is_formatted = '.' in cpf or '-' in cpf
+        numbers = re.sub(r'\D', '', cpf)
 
+        if level == 'high':
+            masked = 'X' * 11
+        else:
+            # Preserva últimos 4 dígitos menos o último
+            masked = 'X' * 7 + numbers[7:10] + 'X'
 
-    def mask_cpf(cpf: str):
+        if is_formatted:
+            return f"{masked[:3]}.{masked[3:6]}.{masked[6:9]}-{masked[9:11]}"
+            
+    def detect_cpf(text: str) -> list:
+        # Helper function para detecção rápida
+        detector = CPFDetector()
+        return detector.detect(text) 
+
+    def mask_cpf(cpf: str, level: str = 'stamdard') -> str:
+        # Helper function para mascaramento rápido.
+        detector = CPFDetector()
+        return detector.mask(cpf, level)
