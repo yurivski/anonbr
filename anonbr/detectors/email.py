@@ -42,7 +42,14 @@ class DetectorEmail:
         return True
 
     def mascarar(self, email: str, nivel: str = 'padrao') -> str:
-        # Mascara email preservando a estrutura
+        """
+        Mascara email preservando estrutura.
+        
+        Níveis:
+        - 'padrao': j****o@dominio.com (primeira e última letra do local)
+        - 'alto': *****@dominio.com (oculta toda parte local)
+        - 'dominio': joao@*****.com (preserva local, oculta domínio)
+        """
         if '@' not in email:
             return email
 
