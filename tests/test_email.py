@@ -105,3 +105,24 @@ class TesteDetectorEmail:
         mascarado = self.detector.mascarar(email)
         
         assert mascarado == email
+
+class TestHelpersEmail:
+    def test_helper_detectar_email(self):
+        texto = "Email: teste@exemplo.com"
+        resultados = detectar_email(texto)
+        
+        assert len(resultados) == 1
+        assert "teste@exemplo.com" in resultados[0][0]
+    
+    def test_helper_mascarar_email(self):
+        email = "joao@email.com"
+        mascarado = mascarar_email(email)
+        
+        assert "@email.com" in mascarado
+        assert mascarado[0] == 'j'
+    
+    def test_helper_mascarar_email_nivel_alto(self):
+        email = "joao@email.com"
+        mascarado = mascarar_email(email, nivel='alto')
+        
+        assert mascarado == "*****@email.com"
