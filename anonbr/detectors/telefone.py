@@ -74,7 +74,53 @@ class DetectorTelefone:
         return True 
 
 
-    def mascarar()
+    def mascarar(self, telefone: str, nivel: str = 'padrao') -> str:
+        """
+        Mascara o número preservando o formato de acordo com os níveis:
+        - 'padrao': (XX) XXXXX-4321 (últimos 4 dígitos)
+        - 'alto': (XX) XXXXX-XXXX (apenas DDD)
+        - 'minimo': (21) XXXXX-4321 (DDD real, resto mascarado menos final)
+        """
+
+        original = telefone
+        numeros = re.sub(r'\D', '', telefone)
+
+        # Remove o código do país:
+        if numeros.startswith('55'):
+            tem_codigo_pais = True
+            numeros = numeros[2:]
+        else:
+            tem_codigo_pais = False
+        ddd = numeros[:2]
+        resto = numeros[2:]
+
+        if nivel == 'alto':
+            mascarado = 'X' * len(resto)
+        elif nivel == 'minimo':
+            # Preserva últimos 4 dígitos
+            mascarado = 'X' * (len(resto) - 4) + resto[-4:]
+        else:
+            # Nível padrão: Preserva últimos 4 dígitos
+            mascarado = 'X' * (len(resto) - 4) + resto[-4:]
+
+        # Reconstroi formato original
+        if '(' in original and ')' in original:
+            if len(resto) == 9:
+                formatado = f"({ddd if nivel != 'alto' else 'XX'}) {mascarado[:5]}-{mascarado[5:]}"
+            else:
+                formatado = f"({ddd if nivel != 'alto' else 'XX'}) {mascarado[:4]}-{mascarado[4:]}"
+            
+            if tem_codigo_pais:
+                formatado = f"+55 {formatado}"
+            return formatado
+        elif '-' in original:
+            if len(resto) == 9:
+                formatado = f"({ddd if nivel != 'alto' else 'XX'}) {mascarado[:5]}-{mascarado[5:]}
+            else:
+                formatado = f"({ddd if nivel != 'alto' else 'XX'}) {mascarado[:4]}-{mascarado[4:]}
+            return formatado
+        else:
+            return (ddd if nivel != 'alto' else 'XX') + mascarado
 
 def tetectar_telefone()
 
