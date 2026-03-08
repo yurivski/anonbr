@@ -35,7 +35,7 @@ class DetectorTelefone:
                 inicio, fim = match.start(), match.end()
 
                 # Evita sobreposição:
-                if any(i <= inicio < f or i < fim ,= f for i, f in posicoes_encontradas):
+                if any(i <= inicio < f or i < fim <= f for i, f in posicoes_encontradas):
                     continue
 
                 telefone = match.group()
@@ -122,6 +122,12 @@ class DetectorTelefone:
         else:
             return (ddd if nivel != 'alto' else 'XX') + mascarado
 
-def tetectar_telefone()
+def tetectar_telefone(texto: str) -> list:
+    # Função auxiliar para detecção rápida:
+    detectar = DetectorTelefone()
+    return detector.detectar(texto)
 
-def mascarar_telefone()
+def mascarar_telefone(telefone: str, nivel: str = 'padrao') -> str:
+    # Função auxiliar para mascaramento rápido:
+    detector = DetectorTelefone()
+    return detector.detectar(telefone, nivel)
