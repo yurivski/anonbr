@@ -46,7 +46,32 @@ class DetectorTelefone:
             return resultados
 
 
-    def validar()
+    def _validar(self, telefone: str) -> bool:
+        """
+        Valida números, padrões:
+        - 10 dígitos (fixo) ou 11 dígitos (celular)
+        - DDD válido (11-99)
+        - Celular começa com 9
+        """
+        numeros = re.sub(r'\D', '', telefone)
+
+        # Remove código do país se presente:
+        if numeros.startswith('55'):
+            numeros = numeros[2:]
+
+        if len(numeros) not in [10, 11]:
+            return False
+
+        # DDD deve star entre 11 e 99
+        ddd = int(numeros[:2])
+        if ddd < 11 or ddd > 99:
+            return False
+
+        # Se tem 11 dígitos o terceiro deve ser 9 (celular)
+        if len(numeros) == 11 and numeros[2] != '9':
+            return False
+
+        return True 
 
 
     def mascarar()
