@@ -90,3 +90,22 @@ class TestDetectorCPF:
         assert '.' in self.detector.mascarar(cpf_nao_formatado)
 
 class TestHelperCPF:
+    def test_helper_detectar_cpf(self):
+        texto = "CPF: 191.626.848-01"
+        resultados = detect_cpf(texto)
+
+        assert len(resultados) == 1
+        assert "191.626.848-01" in resultados[0][0]
+
+    def test_helper_mascarar_cpf(self):
+        cpf = "123.456.789-09"
+        mascarado = mascarar_cpf(cpf)
+
+        assert "XXX" in mascarado
+        assert "789" in mascarado
+
+    def test_helper_mascarar_cpf_nivel_alto(self):
+        cpf = "123.456.789-09"
+        mascarado = mascarar_cpf(cpf, nivel='alto')
+
+        assert mascarado == "XXX.XXX.XXX-XX"
