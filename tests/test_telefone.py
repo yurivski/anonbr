@@ -126,3 +126,23 @@ class TestDetectorTelefone:
         
         assert "(21)" in mascarado
         assert "4321" in mascarado
+
+class TestHelpersTelefone:
+    def test_helper_detectar_telefone(self):
+        texto = "Telefone: (21) 98765-4321"
+        resultados = detectar_telefone(texto)
+        
+        assert len(resultados) == 1
+    
+    def test_helper_mascarar_telefone(self):
+        telefone = "(21) 98765-4321"
+        mascarado = mascarar_telefone(telefone)
+        
+        assert "4321" in mascarado
+        assert "XXX" in mascarado
+    
+    def test_helper_mascarar_telefone_nivel_alto(self):
+        telefone = "(21) 98765-4321"
+        mascarado = mascarar_telefone(telefone, nivel='alto')
+        
+        assert "4321" not in mascarado
