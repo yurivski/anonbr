@@ -19,9 +19,13 @@ __license__ = 'MIT'
 from anonbr.detectors.cpf import DetectorCPF, detectar_cpf, mascarar_cpf
 from anonbr.detectors.email import DetectorEmail, detectar_email, mascarar_email
 from anonbr.detectors.telefone import DetectorTelefone, detectar_telefone, mascarar_telefone
+from anonbr.anonymizer import Anonymizer
 
 __all__ = [
-    # Classes principais
+    # Classe principal
+    'Anonymizer',
+
+    # Classes detectores
     'DetectorCPF',
     'DetectorEmail',
     'DetectorTelefone',
