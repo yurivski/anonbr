@@ -33,13 +33,13 @@ class TestDetectorCPF:
 
     def test_nao_detectar_cpf_invalido(self):
         texto = "CPF falso: 987.654.321-01"
-        resultados = self.detector.detectar(texto):
+        resultados = self.detector.detectar(texto)
 
         assert len(resultados) == 0
 
     def test_nao_detectar_cpf_todos_iguais(self):
         texto = "CPF: 111.111.111-11"
-        resultados = self.detector;detectar(self):
+        resultados = self.detector;detectar(self)
 
         assert len(resultados) == 0
 
@@ -56,11 +56,11 @@ class TestDetectorCPF:
         assert self.detector._validar("123.456.789") == False
         assert self.detector._validar("1234567890") == False
 
-    def def test_mascarar_cpf_formatado_padrao(self):
+    def test_mascarar_cpf_formatado_padrao(self):
         cpf = "123.456.789-09"
         mascarado = self.detector.mascarar(cpf, nivel='padrao')
 
-        assert mascarado = "XXX.XXX.789-0X"
+        assert mascarado == "XXX.XXX.789-0X"
 
     def test_mascarar_cpf_nao_formatado_padrao(self):
         cpf = "12345678909"
@@ -72,13 +72,13 @@ class TestDetectorCPF:
         cpf = "123.456.789.09"
         mascarado = self.detector.mascarar(cpf, nivel='alto')
         
-        assert mascarado = "XXX.XXX.XXX-XX"
+        assert mascarado == "XXX.XXX.XXX-XX"
 
     def test_mascarar_cpf_nao_formatado_nivel_alto(self):
         cpf = "12345678909"
         mascarado = self.detector.mascarar(cpf, nivel='alto')
 
-        assert mascarado = "XXXXXXXXXX"
+        assert mascarado == "XXXXXXXXXX"
 
     def test_mascarar_preserva_formato(self):
         cpf_formatado = "292.345.543-78"
