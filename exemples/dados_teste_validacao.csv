@@ -1,0 +1,11 @@
+id,nome,cpf,email,telefone,observacao
+1,Teste Válido,191.626.860-01,teste@email.com,(11) 98765-4321,Todos dados válidos
+2,CPF Inválido,123.456.789-00,valido@email.com,(11) 98765-4321,CPF com dígito errado
+3,Email Inválido,191.626.860-01,emailsemarroba.com,(11) 98765-4321,Email sem @
+4,Telefone Inválido,191.626.860-01,teste@email.com,(05) 98765-4321,DDD inválido
+5,CPF Todos Iguais,111.111.111-11,teste@email.com,(11) 98765-4321,CPF com todos dígitos iguais
+6,Múltiplos Formatos,19162686001,usuario+tag@dominio.com.br,11987654321,Sem formatação
+7,Com Código País,191.626.860-01,teste@email.com,+55 11 98765-4321,Telefone internacional
+8,Nome Curto Email,191.626.860-01,ab@email.com,(11) 98765-4321,Email com 2 letras
+9,Telefone Fixo,191.626.860-01,teste@email.com,(11) 3456-7890,Telefone fixo 8 dígitos
+10,Dados Vazios,,,,,Campos vazios para teste

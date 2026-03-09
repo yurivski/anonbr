@@ -1,0 +1,11 @@
+id,nome,cpf,email,telefone,cargo,departamento,data_admissao,salario
+1,João Silva,191.626.860-01,joao.silva@empresa.com.br,(11) 98765-4321,Analista de Dados,TI,2023-01-15,8500.00
+2,Maria Santos,52998224725,maria.santos@empresa.com.br,11987654321,Engenheira de Dados,TI,2022-03-20,12000.00
+3,Pedro Oliveira,070.680.240-00,pedro.oliveira@empresa.com.br,(21) 97654-3210,Cientista de Dados,Analytics,2023-06-10,15000.00
+4,Ana Costa,18104242960,ana.costa@empresa.com.br,+55 11 96543-2109,Gerente de TI,TI,2020-02-01,18000.00
+5,Carlos Pereira,390.910.460-79,carlos.pereira@empresa.com.br,(11) 3456-7890,DBA,Infraestrutura,2021-08-15,10000.00
+6,Juliana Alves,23176449109,juliana.alves+work@empresa.com.br,11934567890,Analista de BI,Analytics,2023-04-01,9000.00
+7,Roberto Lima,608.512.470-63,roberto.lima@empresa.com.br,(21) 98765-1234,Arquiteto de Dados,TI,2019-11-20,16000.00
+8,Fernanda Souza,74317949153,fernanda.souza@empresa.com.br,21987651234,Desenvolvedora,Desenvolvimento,2022-09-05,11000.00
+9,Lucas Martins,867.993.020-54,lucas.martins@empresa.com.br,(11) 95432-1098,Engenheiro ML,Analytics,2023-02-14,13500.00
+10,Patricia Rocha,49446658087,patricia.rocha@empresa.com.br,+55 21 95432-1098,Analista Sênior,TI,2021-05-30,14000.00
