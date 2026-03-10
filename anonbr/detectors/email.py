@@ -67,12 +67,12 @@ class DetectorEmail:
                 local_mascarado = local[0] + '*' * (len(local) - 2) + local[-1]
             return f"{local_mascarado}@{dominio}"
 
-        def detectar_email(texto: str) -> list:
+def detectar_email(texto: str) -> list:
             # Função auxiliar para detecção rápida
             detector = DetectorEmail()
             return detector.detectar(texto)
 
-        def mascarar_email(email, str, nivel: str = 'padrao') - str:
+def mascarar_email(email, str, nivel: str = 'padrao') -> str:
             # Função auxiliar para mascaramento rápido
             detector = DetectorEmail()
             return detector.mascarar(email, nivel)
