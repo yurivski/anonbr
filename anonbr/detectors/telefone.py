@@ -122,7 +122,7 @@ class DetectorTelefone:
         else:
             return (ddd if nivel != 'alto' else 'XX') + mascarado
 
-def tetectar_telefone(texto: str) -> list:
+def detectar_telefone(texto: str) -> list:
     # Função auxiliar para detecção rápida:
     detectar = DetectorTelefone()
     return detector.detectar(texto)
