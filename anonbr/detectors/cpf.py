@@ -62,7 +62,7 @@ class DetectorCPF:
 
         return int(numbers[10]) == second_digit
 
-    def mask(self, cpf: str, level: str = 'standard') -> str:
+    def mascarar(self, cpf: str, level: str = 'standard') -> str:
         # Mascara CPF preservando formato original.
         is_formatted = '.' in cpf or '-' in cpf
         numbers = re.sub(r'\D', '', cpf)
@@ -76,12 +76,12 @@ class DetectorCPF:
         if is_formatted:
             return f"{masked[:3]}.{masked[3:6]}.{masked[6:9]}-{masked[9:11]}"
             
-    def detect_cpf(text: str) -> list:
+def detectar_cpf(text: str) -> list:
         # Helper function para detecção rápida
         detector = CPFDetector()
         return detector.detect(text) 
 
-    def mask_cpf(cpf: str, level: str = 'stamdard') -> str:
+def mascarar_cpf(cpf: str, level: str = 'stamdard') -> str:
         # Helper function para mascaramento rápido.
         detector = CPFDetector()
         return detector.mask(cpf, level)
