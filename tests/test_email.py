@@ -1,5 +1,5 @@
 import pytest
-from anonbr.detectors.email import DetectorEmail, detectar_email, mascarar_email
+from anonbr.detectors.email import DetectorEmail, detectar, mascarar
 
 class TesteDetectorEmail:
     def setup_method(self):

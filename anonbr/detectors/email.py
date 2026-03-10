@@ -29,7 +29,7 @@ class DetectorEmail:
         if len(partes) != 2:
             return False
 
-        local, fominio = partes
+        local, dominio = partes
 
         # Parte local não pode estr vazia
         if not local or len(local) > 64:
@@ -57,7 +57,7 @@ class DetectorEmail:
 
         if nivel == 'alto':
             return f"*****@{dominio}"
-        elif nivel 'dominio':
+        elif nivel == 'dominio':
             return f"{local}@*****"
         else:
             # Padrão: preserva a primeira e última letra
