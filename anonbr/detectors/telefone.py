@@ -115,9 +115,9 @@ class DetectorTelefone:
             return formatado
         elif '-' in original:
             if len(resto) == 9:
-                formatado = f"({ddd if nivel != 'alto' else 'XX'}) {mascarado[:5]}-{mascarado[5:]}
+                formatado = f"({ddd if nivel != 'alto' else 'XX'}) {mascarado[:5]}-{mascarado[5:]}"
             else:
-                formatado = f"({ddd if nivel != 'alto' else 'XX'}) {mascarado[:4]}-{mascarado[4:]}
+                formatado = f"({ddd if nivel != 'alto' else 'XX'}) {mascarado[:4]}-{mascarado[4:]}"
             return formatado
         else:
             return (ddd if nivel != 'alto' else 'XX') + mascarado
