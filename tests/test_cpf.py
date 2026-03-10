@@ -3,7 +3,7 @@ Arquivo teste para detecção, validação e mascaramento do CPF.
 """
 
 import pytest
-from anonbr.detectors.cpf import DetectorCPF, detect_cpf, mask_cpf
+from anonbr.detectors.cpf import DetectorCPF, detectar_cpf, mascarar_cpf
 
 class TestDetectorCPF:
     def setup_method(self):
