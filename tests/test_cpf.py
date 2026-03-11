@@ -10,23 +10,23 @@ class TestDetectorCPF:
         self.detector = DetectorCPF()
 
     def test_detectar_cpf_formatado(self):
-        texto = "Meu CPF é 191.626.860-01"
+        texto = "Meu CPF é 375.096.646-08"
         resultados = self.detector.detectar(texto)
 
         assert len(resultados) == 1
-        assert resultados[0][0] == "191.626.860-01"
+        assert resultados[0][0] == "375.096.646-08"
         assert resultados[0][3] == True
 
     def test_detectar_cpf_nao_formatado(self):
-        texto = "CPF: 19162686001"
+        texto = "CPF: 37509664608"
         resultados = self.detector.detectar(texto)
 
         assert len(resultados) == 1
-        assert resultados[0][0] == "19162686001"
+        assert resultados[0][0] == "37509664608"
         assert resultados[0][3] == False
 
     def test_detectar_multiplos_cpfs(self):
-        texto = "CPF 1: 191.626.860-01 e CPF 2: 452998224725"
+        texto = "CPF 1: 375.096.646-08 e CPF 2: 41358800960"
         resultados = self.detector.detectar(texto)
 
         assert len(resultados) == 2
@@ -91,11 +91,11 @@ class TestDetectorCPF:
 
 class TestHelperCPF:
     def test_helper_detectar_cpf(self):
-        texto = "CPF: 191.626.860-01"
+        texto = "CPF: 375.096.646-08"
         resultados = detectar_cpf(texto)
 
         assert len(resultados) == 1
-        assert "191.626.860-01" in resultados[0][0]
+        assert "375.096.646-08" in resultados[0][0]
 
     def test_helper_mascarar_cpf(self):
         cpf = "123.456.789-09"
