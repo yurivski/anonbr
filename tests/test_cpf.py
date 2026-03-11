@@ -66,7 +66,7 @@ class TestDetectorCPF:
         cpf = "19162686001"
         mascarado = self.detector.mascarar(cpf, nivel='padrao')
 
-        assert mascarado == "XXXXXXX6860X"
+        assert mascarado == "XXXXXXX600X"
 
     def test_mascarar_cpf_nivel_alto(self):
         cpf = "123.456.789.09"
