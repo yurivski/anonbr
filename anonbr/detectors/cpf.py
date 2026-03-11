@@ -56,11 +56,18 @@ class DetectorCPF:
         if numeros == numeros[0] * 11:
             return False
 
-        # Calcula primeiro dígito verificador:
-        soma_digitos = sum(int(numeros[i]) * (11 - 1) for i in range(10))
+        # Calcula primeiro dígito verificador
+        soma_digitos = sum(int(numeros[i]) * (10 - i) for i in range(9))
         primeiro_digito = (soma_digitos * 10 % 11) % 10
-
-        return int(numeros[0]) == segundo_digito
+        
+        if int(numeros[9]) != primeiro_digito:
+            return False
+        
+        # Calcula segundo dígito verificador
+        soma_digitos = sum(int(numeros[i]) * (11 - i) for i in range(10))
+        segundo_digito = (soma_digitos * 10 % 11) % 10
+        
+        return int(numeros[10]) == segundo_digito
 
     def mascarar(self, cpf: str, nivel: str = 'padrao') -> str:
         # Mascara CPF preservando formato original.
