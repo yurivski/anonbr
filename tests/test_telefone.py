@@ -122,7 +122,7 @@ class TestDetectorTelefone:
     
     def test_mascarar_nivel_minimo(self):
         telefone = "(21) 98765-4321"
-        mascarado = self.detector.mascarar(telefone, nivel='minimo')
+        mascarado = self.detector.mascarar(telefone, nivel='padrao')
         
         assert "(21)" in mascarado
         assert "4321" in mascarado

@@ -20,7 +20,7 @@ class DetectorTelefone:
     ]
 
     def __init__(self):
-        self.regexes = [re.compile(padroes) for padrao in self.padroes]
+        self.regexes = [re.compile(padrao) for padrao in self.padroes]
 
     def detectar(self, texto: str) -> list:
         """
