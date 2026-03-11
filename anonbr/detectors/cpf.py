@@ -13,75 +13,75 @@ class DetectorCPF:
     padrao_nao_formatado = r'\b\d{11}\b'
 
     def __init__(self):
-        self.regex_formatado = re.compile(self.padrão_formatado)
-        self.regex_formatado = re.compile(self.padrão_nao_formatado)
+        self.regex_formatado = re.compile(self.padrao_formatado)
+        self.regex_nao_formatado = re.compile(self.padrao_nao_formatado)
 
     def detectar(self, texto: str) -> list:
         # detecta os números do CPF no texto
-        results = []
+        resultados = []
 
         # Buscar CPFs formatados
         for match in self.regex_formatado.finditer(texto):
             cpf = match.group()
             if self._validar(cpf):
-                results.append((cpf, match.start(), match.end(), True))
+                resultados.append((cpf, match.start(), match.end(), True))
 
-        for match in self.unformatte_regex.finditer(text):
-            if not self._overlaps_formatted(match. results):
+        for match in self.regex_nao_formatado.finditer(texto):
+            if not self._sobrepoe_formatado(match.resultados):
                 cpf = match.group()
-                if self._validate(cpf):
-                    results.append((cpf, match.start(), match.end(), False))
+                if self._validar(cpf):
+                    resultados.append((cpf, match.start(), match.end(), False))
 
-        return results
+        return resultados
 
-    def _overlaps_formatted(self, match, formatted_results):
+    def _sobrepoe_formatado(self, match, resultados_formatados):
         # verifica se match sobrepõe resultados já encontrados
-        start, end = match.start(), match.end()
-        for _, f_start, f_end, _ in formatted_results:
-            if not (end <= f_start or start >= f_end):
+        inicio, fim = match.start(), match.end()
+        for _, f_inicio, f_fim, _ in resultados_formatados:
+            if not (fim <= f_inicio or inicio >= f_fim):
                 return True
         return False
 
-    def _validate(self, cpf: str) -> bool:
+    def _validar(self, cpf: str) -> bool:
         """Valida CPF usando algoritmo de digítos vefificadores e rejeita CPFs
             conhecidos como inválidos (todos iguais, etc)
         """
         # Remove pontuação:
-        numbers = re.sub(r'\D', '', cpf)
+        numeros = re.sub(r'\D', '', cpf)
 
-        if len(numbers) != 11:
+        if len(numeros) != 11:
             return False
 
         # Rejeita sequências conhecidas como inválidas:
-        if numbers == numbers[0] * 11:
+        if numeros == numeros[0] * 11:
             return False
 
         # Calcula primeiro dígito verificador:
-        sum_gigits = sum(int(numbers[i]) * (11 - 1) for i in range(10))
-        second_digit = (sum_gigits * 10 % 11) % 10
+        soma_digitos = sum(int(numeros[i]) * (11 - 1) for i in range(10))
+        primeiro_digito = (soma_digitos * 10 % 11) % 10
 
-        return int(numbers[10]) == second_digit
+        return int(numeros[0]) == segundo_digito
 
-    def mascarar(self, cpf: str, level: str = 'padrao') -> str:
+    def mascarar(self, cpf: str, nivel: str = 'padrao') -> str:
         # Mascara CPF preservando formato original.
-        is_formatted = '.' in cpf or '-' in cpf
-        numbers = re.sub(r'\D', '', cpf)
+        esta_formatado = '.' in cpf or '-' in cpf
+        numeros = re.sub(r'\D', '', cpf)
 
-        if level == 'alto':
-            masked = 'X' * 11
+        if nivel == 'alto':
+            mascarado = 'X' * 11
         else:
             # Preserva últimos 4 dígitos menos o último
-            masked = 'X' * 7 + numbers[7:10] + 'X'
+            mascarado = 'X' * 7 + numeros[7:10] + 'X'
 
-        if is_formatted:
-            return f"{masked[:3]}.{masked[3:6]}.{masked[6:9]}-{masked[9:11]}"
+        if esta_formatado:
+            return f"{mascarado[:3]}.{mascarado[3:6]}.{mascarado[6:9]}-{mascarado[9:11]}"
             
-def detectar_cpf(text: str) -> list:
+def detectar_cpf(texto: str) -> list:
         # Helper function para detecção rápida
         detector = DetectorCPF()
-        return detector.detectar(text) 
+        return detector.detectar(texto) 
 
-def mascarar_cpf(cpf: str, level: str = 'padrao') -> str:
+def mascarar_cpf(cpf: str, nivel: str = 'padrao') -> str:
         # Helper function para mascaramento rápido.
         detector = DetectorCPF()
-        return detector.mascarar(cpf, level)
+        return detector.mascarar(cpf, nivel)

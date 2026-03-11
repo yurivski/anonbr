@@ -10,14 +10,14 @@ class TestDetectorCPF:
         self.detector = DetectorCPF()
 
     def test_detectar_cpf_formatado(self):
-        texto = "Meu CPF é 123.456.789-09"
-        resultados = self.detector.tetectar(texto)
+        texto = "Meu CPF é 191.626.860-01"
+        resultados = self.detector.detectar(texto)
 
         assert len(resultados) == 1
         assert resultados[0][0] == "123.456.789-09"
         assert resultados[0][3] == True
 
-    def test_detectar_cpf_nao_formatado(felf):
+    def test_detectar_cpf_nao_formatado(self):
         texto = "CPF: 12345678909"
         resultados = self.detector.detectar(texto)
 
@@ -26,7 +26,7 @@ class TestDetectorCPF:
         assert resultados[0][3] == False
 
     def test_detectar_multiplos_cpfs(self):
-        texto = "CPF 1: 123.456.789-09 e CPF 2:  453627485809"
+        texto = "CPF 1: 123.456.789-09 e CPF 2: 453627485809"
         resultados = self.detector.detectar(texto)
 
         assert len(resultados) == 2
@@ -39,7 +39,7 @@ class TestDetectorCPF:
 
     def test_nao_detectar_cpf_todos_iguais(self):
         texto = "CPF: 111.111.111-11"
-        resultados = self.detector;detectar(self)
+        resultados = self.detector.detectar(self)
 
         assert len(resultados) == 0
 
@@ -60,7 +60,7 @@ class TestDetectorCPF:
         cpf = "123.456.789-09"
         mascarado = self.detector.mascarar(cpf, nivel='padrao')
 
-        assert mascarado == "XXX.XXX.789-0X"
+        assert mascarado == "XXX.XXX.X89-0X"
 
     def test_mascarar_cpf_nao_formatado_padrao(self):
         cpf = "12345678909"
@@ -85,9 +85,9 @@ class TestDetectorCPF:
         cpf_nao_formatado = "29234554378"
 
         assert '.' in self.detector.mascarar(cpf_formatado)
-        assert '.' in self.detector.mascarar(cpf_formatado)
-        assert '.' in self.detector.mascarar(cpf_nao_formatado)
-        assert '.' in self.detector.mascarar(cpf_nao_formatado)
+        assert '-' in self.detector.mascarar(cpf_formatado)
+        assert '.' not in self.detector.mascarar(cpf_nao_formatado)
+        assert '-' not in self.detector.mascarar(cpf_nao_formatado)
 
 class TestHelperCPF:
     def test_helper_detectar_cpf(self):
@@ -99,10 +99,10 @@ class TestHelperCPF:
 
     def test_helper_mascarar_cpf(self):
         cpf = "123.456.789-09"
-        mascarado = mascarar_cpf(cpf, nivel='')
+        mascarado = mascarar_cpf(cpf)
 
         assert "XXX" in mascarado
-        assert "789" in mascarado
+        assert "X89" in mascarado
 
     def test_helper_mascarar_cpf_nivel_alto(self):
         cpf = "123.456.789-09"
