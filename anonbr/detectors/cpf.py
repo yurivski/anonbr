@@ -27,7 +27,7 @@ class DetectorCPF:
                 resultados.append((cpf, match.start(), match.end(), True))
 
         for match in self.regex_nao_formatado.finditer(texto):
-            if not self._sobrepoe_formatado(match.resultados):
+            if not self._sobrepoe_formatado(match, resultados):
                 cpf = match.group()
                 if self._validar(cpf):
                     resultados.append((cpf, match.start(), match.end(), False))
@@ -76,6 +76,8 @@ class DetectorCPF:
         if esta_formatado:
             return f"{mascarado[:3]}.{mascarado[3:6]}.{mascarado[6:9]}-{mascarado[9:11]}"
             
+        return mascarado
+        
 def detectar_cpf(texto: str) -> list:
         # Helper function para detecção rápida
         detector = DetectorCPF()
