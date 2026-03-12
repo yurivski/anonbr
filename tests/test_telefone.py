@@ -114,7 +114,7 @@ class TestDetectorTelefone:
         assert "-" not in mascarado
     
     def test_mascarar_com_codigo_pais(self):
-        telefone = "+55 21 98765-4321"
+        telefone = "+55 (21) 98765-4321"
         mascarado = self.detector.mascarar(telefone)
         
         assert "+55" in mascarado
