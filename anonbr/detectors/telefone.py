@@ -128,4 +128,4 @@ def detectar_telefone(texto: str) -> list:
 def mascarar_telefone(telefone: str, nivel: str = 'padrao') -> str:
     # Função auxiliar para mascaramento rápido:
     detector = DetectorTelefone()
-    return detector.detectar(telefone, nivel)
+    return detector.mascarar(telefone, nivel)
