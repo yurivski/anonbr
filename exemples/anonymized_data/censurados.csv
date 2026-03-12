@@ -1,0 +1,11 @@
+id,nome,cpf,email,telefone,cargo,departamento,data_admissao,salario
+1,João Silva,191.626.860-01,j********a@empresa.com.br,(11) XXXXX-4321,Analista de Dados,TI,2023-01-15,8500.0
+2,Maria Santos,52998224725,m**********s@empresa.com.br,11XXXXX4321,Engenheira de Dados,TI,2022-03-20,12000.0
+3,Pedro Oliveira,070.680.240-00,p************a@empresa.com.br,(21) XXXXX-3210,Cientista de Dados,Analytics,2023-06-10,15000.0
+4,Ana Costa,18104242960,a*******a@empresa.com.br,(11) XXXXX-2109,Gerente de TI,TI,2020-02-01,18000.0
+5,Carlos Pereira,390.910.460-79,c************a@empresa.com.br,(11) XXXX-7890,DBA,Infraestrutura,2021-08-15,10000.0
+6,Juliana Alves,23176449109,j****************k@empresa.com.br,11XXXXX7890,Analista de BI,Analytics,2023-04-01,9000.0
+7,Roberto Lima,608.512.470-63,r**********a@empresa.com.br,(21) XXXXX-1234,Arquiteto de Dados,TI,2019-11-20,16000.0
+8,Fernanda Souza,74317949153,f************a@empresa.com.br,21XXXXX1234,Desenvolvedora,Desenvolvimento,2022-09-05,11000.0
+9,Lucas Martins,867.993.020-54,l***********s@empresa.com.br,(11) XXXXX-1098,Engenheiro ML,Analytics,2023-02-14,13500.0
+10,Patricia Rocha,49446658087,p************a@empresa.com.br,(21) XXXXX-1098,Analista Sênior,TI,2021-05-30,14000.0
