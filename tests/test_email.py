@@ -80,7 +80,7 @@ class TesteDetectorEmail:
         
         assert mascarado == "j*******a@email.com"
         assert mascarado[0] == 'j'
-        assert mascarado[-10] == 'a'
+        assert mascarado[-11] == 'a'
     
     def test_mascarar_email_curto(self):
         email = "ab@email.com"
