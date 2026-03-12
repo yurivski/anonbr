@@ -11,17 +11,8 @@ from anonbr.detectors.telefone import DetectorTelefone
 class Anonymizer:
     """
     Anonimizador principal que detecta e mascara dados sensíveis em DataFrames.
-    
     Detecta automaticamente CPF, email e telefone em colunas e aplica
     mascaramento preservando formato original.
-    
-    Exemplo:
-        >>> import pandas as pd
-        >>> from anonbr import Anonymizer
-        >>> 
-        >>> df = pd.read_csv('dados.csv')
-        >>> anonimizador = Anonymizer()
-        >>> df_anonimizado = anonimizador.anonimizar(df)
     """
     
     def __init__(self, nivel='padrao'):
@@ -86,10 +77,6 @@ class Anonymizer:
             df: DataFrame pandas
             colunas: Lista de colunas para anonimizar (None = todas)
             inplace: Se True, modifica DataFrame original
-
-        Exemplo:
-            >>> df_anon = anonimizador.anonimizar(df)
-            >>> df_anon = anonimizador.anonimizar(df, colunas=['cpf', 'email'])
         """
         if not inplace:
             df = df.copy()
@@ -112,12 +99,7 @@ class Anonymizer:
     def relatorio(self, df):
         """
         Gera relatório de colunas com dados sensíveis detectados.
-        
         Returna Dict com informações das colunas detectadas
-        Exemplo:
-            >>> info = anonimizador.relatorio(df)
-            >>> print(info)
-            {'cpf': ['coluna_cpf'], 'email': ['coluna_email']}
         """
         resultado = {
             'cpf': [],
