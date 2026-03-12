@@ -42,9 +42,7 @@ class DetectorTelefone:
                 if self._validar(telefone):
                     resultados.append((telefone, inicio, fim, indice_padrao))
                     posicoes_encontradas.add((inicio, fim))
-
-            return resultados
-
+        return resultados
 
     def _validar(self, telefone: str) -> bool:
         """
@@ -124,7 +122,7 @@ class DetectorTelefone:
 
 def detectar_telefone(texto: str) -> list:
     # Função auxiliar para detecção rápida:
-    detectar = DetectorTelefone()
+    detector = DetectorTelefone()
     return detector.detectar(texto)
 
 def mascarar_telefone(telefone: str, nivel: str = 'padrao') -> str:
