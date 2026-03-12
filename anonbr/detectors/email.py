@@ -21,7 +21,7 @@ class DetectorEmail:
             email = match.group()
             if self._validar(email):
                 resultados.append((email, match.start(), match.end()))
-            return resultados
+        return resultados
 
     def _validar(self, email: str) -> bool:
         # Validação simples de email
@@ -36,7 +36,7 @@ class DetectorEmail:
             return False
 
         # Domínio deve ter pelo menos um ponto
-        if '.' not in dominio or len(dominio) > 255:
+        if '.' not in dominio or len(dominio) > 253:
             return False
 
         return True
