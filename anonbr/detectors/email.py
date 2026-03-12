@@ -72,7 +72,7 @@ def detectar_email(texto: str) -> list:
     detector = DetectorEmail()
     return detector.detectar(texto)
 
-def mascarar_email(email, str, nivel: str = 'padrao') -> str:
+def mascarar_email(email: str, nivel: str = 'padrao') -> str:
     # Função auxiliar para mascaramento rápido
     detector = DetectorEmail()
     return detector.mascarar(email, nivel)

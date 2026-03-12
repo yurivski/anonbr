@@ -7,7 +7,9 @@ class TesteDetectorEmail:
     
     def test_detectar_email_simples(self):
         texto = "Contato: joao@email.com"
-        resultados = self.detector[0][0] == "joao@email.com"
+        resultados = self.detector.detectar(texto)
+        
+        assert resultados[0][0] == "joao@email.com"
 
     def test_detectar_email_com_ponto(self):
         texto = "Email: joao.silva@empresa.com.br"
