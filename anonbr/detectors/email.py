@@ -16,9 +16,9 @@ class DetectorEmail:
 
     def detectar(self, texto: str) -> list:
         # Detecta endereços de email no texto
-        sesultados = []
+        resultados = []
         for match in self.regex.finditer(texto):
-            email = mathc.group()
+            email = match.group()
             if self._validar(email):
                 resultados.append((email, match.start(), match.end()))
             return resultados
@@ -68,11 +68,11 @@ class DetectorEmail:
             return f"{local_mascarado}@{dominio}"
 
 def detectar_email(texto: str) -> list:
-            # Função auxiliar para detecção rápida
-            detector = DetectorEmail()
-            return detector.detectar(texto)
+    # Função auxiliar para detecção rápida
+    detector = DetectorEmail()
+    return detector.detectar(texto)
 
 def mascarar_email(email, str, nivel: str = 'padrao') -> str:
-            # Função auxiliar para mascaramento rápido
-            detector = DetectorEmail()
-            return detector.mascarar(email, nivel)
+    # Função auxiliar para mascaramento rápido
+    detector = DetectorEmail()
+    return detector.mascarar(email, nivel)
