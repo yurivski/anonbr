@@ -83,7 +83,7 @@ class DetectorTelefone:
         numeros = re.sub(r'\D', '', telefone)
 
         # Remove o código do país:
-        if numeros.startswith('55'):
+        if numeros.startswith('55') and len(numeros) > 11:
             tem_codigo_pais = True
             numeros = numeros[2:]
         else:
@@ -93,6 +93,7 @@ class DetectorTelefone:
         resto = numeros[2:]
 
         if nivel == 'alto':
+            ddd_mascarado = 'XX'
             mascarado = 'XX' * len(resto)
 
         elif nivel == 'baixo':
