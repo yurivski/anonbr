@@ -39,9 +39,8 @@ class DetectorTelefone:
                     continue
 
                 telefone = match.group()
-                if self._validar(telefone):
-                    resultados.append((telefone, inicio, fim, indice_padrao))
-                    posicoes_encontradas.add((inicio, fim))
+                resultados.append((telefone, inicio, fim, indice_padrao))
+                posicoes_encontradas.add((inicio, fim))
         return resultados
 
     def _validar(self, telefone: str) -> bool:
@@ -75,11 +74,11 @@ class DetectorTelefone:
     def mascarar(self, telefone: str, nivel: str = 'padrao') -> str:
         """
         Mascara o número preservando o formato de acordo com os níveis:
-        - 'padrao': (XX) XXXXX-4321 (últimos 4 dígitos)
-        - 'alto': (XX) XXXXX-XXXX (apenas DDD)
-        - 'minimo': (21) XXXXX-4321 (DDD real, resto mascarado menos final)
+        Níveis:
+            alto:   +XX (XX) XXXXX-XXXX (tudo mascarado)
+            padrao: +55 (21) XXXXX-5678 (DDD real + últimos 4)
+            baixo:  +55 (21) XXXX2-3456 (DDD real + últimos 5)
         """
-
         original = telefone
         numeros = re.sub(r'\D', '', telefone)
 
@@ -89,37 +88,39 @@ class DetectorTelefone:
             numeros = numeros[2:]
         else:
             tem_codigo_pais = False
+
         ddd = numeros[:2]
         resto = numeros[2:]
 
         if nivel == 'alto':
-            mascarado = 'X' * len(resto)
-        elif nivel == 'minimo':
-            # Preserva últimos 4 dígitos
-            mascarado = 'X' * (len(resto) - 4) + resto[-4:]
-        else:
-            # Nível padrão: Preserva últimos 4 dígitos
-            mascarado = 'X' * (len(resto) - 4) + resto[-4:]
+            mascarado = 'XX' * len(resto)
 
+        elif nivel == 'baixo':
+            ddd_mascarado = ddd
+            qtd_revelar = 5 if len(resto) >= 5 else len(resto)
+            mascarado = 'X' * (len(resto) - qtd_revelar) + resto[-qtd_revelar:]
+        
+        else:
+            # Nível padrão
+            ddd_mascarado = ddd 
+            qtd_revelar = 4 if len(resto) >= 4 else len(resto)
+            mascarado = 'X' * (len(resto) - qtd_revelar) + resto[-qtd_revelar:]
+        
         # Reconstroi formato original
-        if '(' in original and ')' in original:
+        if '(' in original or '-' in original:
             if len(resto) == 9:
-                formatado = f"({ddd if nivel != 'alto' else 'XX'}) {mascarado[:5]}-{mascarado[5:]}"
+                formatado = f"({ddd_mascarado}) {mascarado[:5]}-{mascarado[5:]}"
             else:
-                formatado = f"({ddd if nivel != 'alto' else 'XX'}) {mascarado[:4]}-{mascarado[4:]}"
+                formatado = f"({ddd_mascarado}) {mascarado[:5]}-{mascarado[4:]}"
             
             if tem_codigo_pais:
-                formatado = f"+55 {formatado}"
+                formatado = f"+{'XX' if nivel == 'alto' else '55'} {formatado}"
             return formatado
-        elif '-' in original:
-            if len(resto) == 9:
-                formatado = f"({ddd if nivel != 'alto' else 'XX'}) {mascarado[:5]}-{mascarado[5:]}"
-            else:
-                formatado = f"({ddd if nivel != 'alto' else 'XX'}) {mascarado[:4]}-{mascarado[4:]}"
-            return formatado
-        else:
-            return (ddd if nivel != 'alto' else 'XX') + mascarado
 
+        else:
+            prefixo = ('XX' if nivel == 'alto' else '55') if tem_codigo_pais else ''
+            return prefixo + ddd_mascarado + mascarado
+            
 def detectar_telefone(texto: str) -> list:
     # Função auxiliar para detecção rápida:
     detector = DetectorTelefone()
