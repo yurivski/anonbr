@@ -8,7 +8,7 @@ import pandas as pd
 import traceback
 from anonbr.anonymizer import Anonymizer
 
-arquivo_entrada = os.path.join('exemples', 'dados_exemplo.csv')
+arquivo_entrada = os.path.join('exemples', 'dados_teste_validacao.csv')
 diretorio_saida = os.path.join('exemples', 'anonymized_data')
 arquivo_saida = os.path.join(diretorio_saida, 'censurados.csv')
 
