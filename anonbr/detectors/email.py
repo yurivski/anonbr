@@ -19,36 +19,17 @@ class DetectorEmail:
         resultados = []
         for match in self.regex.finditer(texto):
             email = match.group()
-            if self._validar(email):
-                resultados.append((email, match.start(), match.end()))
+            resultados.append((email, match.start(), match.end()))
         return resultados
-
-    def _validar(self, email: str) -> bool:
-        # Validação simples de email
-        partes = email.split('@')
-        if len(partes) != 2:
-            return False
-
-        local, dominio = partes
-
-        # Parte local não pode estr vazia
-        if not local or len(local) > 64:
-            return False
-
-        # Domínio deve ter pelo menos um ponto
-        if '.' not in dominio or len(dominio) > 253:
-            return False
-
-        return True
 
     def mascarar(self, email: str, nivel: str = 'padrao') -> str:
         """
         Mascara email preservando estrutura.
         
         Níveis:
-        - 'padrao': j****o@dominio.com (primeira e última letra do local)
-        - 'alto': *****@dominio.com (oculta toda parte local)
-        - 'dominio': joao@*****.com (preserva local, oculta domínio)
+            alto:   xxxxxxxxx@xxxxx.xxx (tudo mascarado)
+            padrao: jxxxxxxx@gmail.com (revela primeiro caractere do local)
+            baixo:  xxxosilva@gmail.com (revela final do local)
         """
         if '@' not in email:
             return email
@@ -56,15 +37,21 @@ class DetectorEmail:
         local, dominio = email.split('@', 1)
 
         if nivel == 'alto':
-            return f"*****@{dominio}"
-        elif nivel == 'dominio':
-            return f"{local}@*****"
+            partes_dominio = dominio.split('.')
+            dominio_mascarado = '.'.join('x'* len(parte) for parte in partes_dominio)
+            local_mascarado = 'x' * len(local)
+            return f"{local_mascarado}@{dominio_mascarado}"
+
+        elif nivel == 'baixo':
+            qtd_revelar = len(local) // 2
+            if qtd_revelar == 0:
+                qtd_revelar = 1
+            local_mascarado = 'x' * (len(local) - qtd_revelar) + local[-qtd_revelar:]
+            return f"{local_mascarado}@{dominio}"
+
         else:
-            # Padrão: preserva a primeira e última letra
-            if len(local) <= 2:
-                local_mascarado = local[0] + '*'
-            else:
-                local_mascarado = local[0] + '*' * (len(local) - 2) + local[-1]
+            # Padrão: preserva o primeiro caractere
+            local_mascarado = local[0] + 'x' * (len(local) - 1)
             return f"{local_mascarado}@{dominio}"
 
 def detectar_email(texto: str) -> list:
