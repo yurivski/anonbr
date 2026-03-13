@@ -1,15 +1,5 @@
 """
 Biblioteca Python para detectar e anonimizar os dados sensíveis (CPF, email, telefone).
-
-Exemplo de uso:
-    >>> from anonbr import Anonymizer
-    >>> import pandas as pd
-    >>> 
-    >>> df = pd.read_csv('dados.csv')
-    >>> anonimizador = Anonymizer()
-    >>> df_anonimizado = anonimizador.anonimizar(df)
-
-Para mais informações: https://github.com/yurivski/anonbr
 """
 
 __version__ = '1.0'
