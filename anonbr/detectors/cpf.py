@@ -23,14 +23,12 @@ class DetectorCPF:
         # Buscar CPFs formatados
         for match in self.regex_formatado.finditer(texto):
             cpf = match.group()
-            if self._validar(cpf):
-                resultados.append((cpf, match.start(), match.end(), True))
+            resultados.append((cpf, match.start(), match.end(), True))
 
         for match in self.regex_nao_formatado.finditer(texto):
             if not self._sobrepoe_formatado(match, resultados):
                 cpf = match.group()
-                if self._validar(cpf):
-                    resultados.append((cpf, match.start(), match.end(), False))
+                resultados.append((cpf, match.start(), match.end(), False))
 
         return resultados
 
@@ -42,43 +40,24 @@ class DetectorCPF:
                 return True
         return False
 
-    def _validar(self, cpf: str) -> bool:
-        """Valida CPF usando algoritmo de digítos vefificadores e rejeita CPFs
-            conhecidos como inválidos (todos iguais, etc)
-        """
-        # Remove pontuação:
-        numeros = re.sub(r'\D', '', cpf)
-
-        if len(numeros) != 11:
-            return False
-
-        # Rejeita sequências conhecidas como inválidas:
-        if numeros == numeros[0] * 11:
-            return False
-
-        # Calcula primeiro dígito verificador
-        soma_digitos = sum(int(numeros[i]) * (10 - i) for i in range(9))
-        primeiro_digito = (soma_digitos * 10 % 11) % 10
-        
-        if int(numeros[9]) != primeiro_digito:
-            return False
-        
-        # Calcula segundo dígito verificador
-        soma_digitos = sum(int(numeros[i]) * (11 - i) for i in range(10))
-        segundo_digito = (soma_digitos * 10 % 11) % 10
-        
-        return int(numeros[10]) == segundo_digito
-
     def mascarar(self, cpf: str, nivel: str = 'padrao') -> str:
-        # Mascara CPF preservando formato original.
+        """Mascara CPF preservando formato original.
+            Níveis:
+            alto:   XXX.XXX.XXX-XX (tudo mascarado)
+            padrao: XXX.567.XXX-XX (revela meio)
+            baixo:  XXX.XX9.567-01 (revela final)
+        """
         esta_formatado = '.' in cpf or '-' in cpf
         numeros = re.sub(r'\D', '', cpf)
 
         if nivel == 'alto':
             mascarado = 'X' * 11
+
+        elif nivel == 'baixo':
+            mascarado = 'X' * 6 + numeros[6:11]
         else:
-            # Preserva últimos 4 dígitos menos o último
-            mascarado = 'X' * 7 + numeros[7:10] + 'X'
+            # Padrão: revela meio
+            mascarado = 'X' * 3 + numeros[3:6] + 'X' * 5
 
         if esta_formatado:
             return f"{mascarado[:3]}.{mascarado[3:6]}.{mascarado[6:9]}-{mascarado[9:11]}"
