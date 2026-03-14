@@ -60,7 +60,7 @@ Revela mais informação. Útil para conferência em ambientes controlados.
 
 ## Arquitetura do projeto  
 
-![lógica do cpf](images/arquitetura_docs.png)
+![Arquitetura do projeto](images/arquitetura_docs.png)
 
 ## Como funciona a detecção
 
