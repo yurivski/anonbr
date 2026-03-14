@@ -1,15 +1,19 @@
 # Anonbr
 
+![lógica do cpf](images/Anonbr_banner.png)
+
 ![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
+
+
 Biblioteca Python para detectar e mascarar dados pessoais sensíveis em DataFrames.
 
-Identifica automaticamente CPF, email e telefone em colunas e aplica mascaramento com três níveis de privacidade.
+Este projeto nasceu de uma necessidade real identificada em posts do linkedin, onde DEVs e Analistas ficam P* da vida com DBAs que não dão acesso ao banco de dados para o desenvolvimento de seus respectivos projetos.
 
-Desenvolvida com foco na **LGPD** (Lei Geral de Proteção de Dados) e no **tratamento de dados pessoais no contexto brasileiro**.
+> Desenvolvida com foco na **LGPD** (Lei Geral de Proteção de Dados) e no **tratamento de dados pessoais no contexto brasileiro**. Identifica automaticamente CPF, email e telefone em colunas e aplica mascaramento com três níveis de privacidade.
 
-> *Os dados usados na pasta `exemples/` são fictícios, gerados por IA para simulação de dados pessoais.*
+*Os dados usados na pasta `exemples/` são fictícios, gerados por IA para simulação de dados pessoais.*
 
 
 ## Níveis de Mascaramento
@@ -169,4 +173,3 @@ anonimizador = Anonymizer(nivel='padrao')
 **GitHub:** [yurivski](https://github.com/yurivski)
 
 ---
-Este projeto nasceu de uma necessidade real identificada em posts do linkedin, onde DEVs e Analistas ficam P* da vida com DBAs que não dão acesso ao banco de dados para o desenvolvimento de seus respectivos projetos.
