@@ -2,6 +2,7 @@
 
 ![Banner](images/Anonbr_banner.png)
 
+[![Tests](https://github.com/yurivski/anonbr/actions/workflows/tests.yml/badge.svg)](https://github.com/yurivski/anonbr/actions/workflows/tests.yml)
 ![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
