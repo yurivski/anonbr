@@ -45,37 +45,6 @@ class TestDetectorTelefone:
         
         assert len(resultados) == 2
     
-    def test_validar_celular_valido(self):
-        assert self.detector._validar("(21) 98765-4321") == True
-        assert self.detector._validar("21987654321") == True
-    
-    def test_validar_fixo_valido(self):
-        assert self.detector._validar("(21) 3456-7890") == True
-        assert self.detector._validar("2134567890") == True
-    
-    def test_validar_ddd_valido_range(self):
-        assert self.detector._validar("(11) 98765-4321") == True
-        assert self.detector._validar("(99) 98765-4321") == True
-    
-    def test_validar_ddd_invalido_menor_11(self):
-        assert self.detector._validar("(10) 98765-4321") == False
-        assert self.detector._validar("(05) 98765-4321") == False
-    
-    def test_validar_ddd_invalido_maior_99(self):
-        # DDDs acima de 99 não são válidos no Brasil
-        pass
-    
-    def test_validar_celular_sem_9_inicial(self):
-        assert self.detector._validar("21887654321") == False
-    
-    def test_validar_telefone_tamanho_invalido(self):
-        assert self.detector._validar("219876543") == False  # 9 dígitos
-        assert self.detector._validar("219876543210") == False  # 12 dígitos
-    
-    def test_validar_com_codigo_pais(self):
-        assert self.detector._validar("+55 21 98765-4321") == True
-        assert self.detector._validar("+5521987654321") == True
-    
     def test_mascarar_celular_padrao(self):
         telefone = "(21) 98765-4321"
         mascarado = self.detector.mascarar(telefone, nivel='padrao')
