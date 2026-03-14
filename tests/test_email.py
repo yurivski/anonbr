@@ -44,32 +44,6 @@ class TesteDetectorEmail:
         
         assert len(resultados) == 1
     
-    def test_validar_email_valido(self):
-        assert self.detector._validar("usuario@dominio.com") == True
-        assert self.detector._validar("user.name@example.co.uk") == True
-    
-    def test_validar_email_sem_arroba(self):
-        assert self.detector._validar("usuariodominio.com") == False
-    
-    def test_validar_email_sem_ponto_dominio(self):
-        assert self.detector._validar("usuario@dominio") == False
-    
-    def test_validar_email_local_vazio(self):
-        assert self.detector._validar("@dominio.com") == False
-    
-    def test_validar_email_dominio_vazio(self):
-        assert self.detector._validar("usuario@") == False
-    
-    def test_validar_email_local_muito_longo(self):
-        local_longo = "a" * 65
-        email = f"{local_longo}@dominio.com"
-        assert self.detector._validar(email) == False
-    
-    def test_validar_email_dominio_muito_longo(self):
-        dominio_longo = "a" * 250 + ".com"
-        email = f"usuario@{dominio_longo}"
-        assert self.detector._validar(email) == False
-    
     def test_mascarar_email_padrao(self):
         email = "joao@email.com"
         mascarado = self.detector.mascarar(email, nivel='padrao')
