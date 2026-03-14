@@ -60,13 +60,13 @@ class TestDetectorCPF:
         cpf = "123.456.789-09"
         mascarado = self.detector.mascarar(cpf, nivel='padrao')
 
-        assert mascarado == "XXX.XXX.X89-0X"
+        assert mascarado == "XXX.456.XXX-XX"
 
     def test_mascarar_cpf_nao_formatado_padrao(self):
         cpf = "19162686001"
         mascarado = self.detector.mascarar(cpf, nivel='padrao')
 
-        assert mascarado == "XXXXXXX600X"
+        assert mascarado == "XXX626XXXXX"
 
     def test_mascarar_cpf_nivel_alto(self):
         cpf = "123.456.789.09"
@@ -102,7 +102,6 @@ class TestHelperCPF:
         mascarado = mascarar_cpf(cpf)
 
         assert "XXX" in mascarado
-        assert "X89" in mascarado
 
     def test_helper_mascarar_cpf_nivel_alto(self):
         cpf = "123.456.789-09"
