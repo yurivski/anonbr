@@ -52,6 +52,10 @@ Revela mais informação. Útil para conferência em ambientes controlados.
 | Email    | bruno.silva@empresa.com.br       | xxxxosilva@empresa.com.br        |
 | Telefone | (21) 98765-4321                 | (21) XXXX5-4321                  |
 
+## Arquitetura do projeto  
+
+![lógica do cpf](images/arquitetura_docs.png)
+
 ## Como funciona a detecção
 
 A detecção é baseada em padrões visuais (regex), sem validação matemática. Isso garante que qualquer dado que pareça um CPF, email ou telefone será detectado e mascarado.
