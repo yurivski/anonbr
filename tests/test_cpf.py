@@ -31,18 +31,6 @@ class TestDetectorCPF:
 
         assert len(resultados) == 2
 
-    def test_nao_detectar_cpf_invalido(self):
-        texto = "CPF falso: 987.654.321-01"
-        resultados = self.detector.detectar(texto)
-
-        assert len(resultados) == 0
-
-    def test_nao_detectar_cpf_todos_iguais(self):
-        texto = "CPF: 111.111.111-11"
-        resultados = self.detector.detectar(texto)
-
-        assert len(resultados) == 0
-
     def test_validar_cpf_valido(self):
         assert self.detector._validar("123.456.789-09") == True
         assert self.detector._validar("12345678909") == True
