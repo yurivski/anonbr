@@ -1,20 +1,21 @@
-# Anonbr
+<h1><img src="images/Anonbr_icon.png" alt="Anonbr logo" width="50" align="absmiddle">&nbsp;&nbsp;Anonbr</h1>
 
-![lógica do cpf](images/Anonbr_banner.png)
+![Banner](images/Anonbr_banner.png)
 
 ![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
-
-
 Biblioteca Python para detectar e mascarar dados pessoais sensíveis em DataFrames.
 
-Este projeto nasceu de uma necessidade real identificada em posts do linkedin, onde DEVs e Analistas ficam P* da vida com DBAs que não dão acesso ao banco de dados para o desenvolvimento de seus respectivos projetos.
+Este projeto nasceu de uma necessidade real identificada em posts do Linkedin, em que DEVs e analistas ficam P* da vida com DBAs que não dão acesso ao banco de dados para o desenvolvimento de seus respectivos projetos. Identifica automaticamente [CPF](#cpf), [email](#email) e [Telefone](#telefone) em colunas e aplica mascaramento com [três níveis de privacidade.](#níveis-de-mascaramento)  
 
-> Desenvolvida com foco na **LGPD** (Lei Geral de Proteção de Dados) e no **tratamento de dados pessoais no contexto brasileiro**. Identifica automaticamente CPF, email e telefone em colunas e aplica mascaramento com três níveis de privacidade.
+> **Contribua sem comprimisso**, vamos escrever códigos bugados e desbugar **em prol do desenvolvimento pessoal e profissional.** Sintam-se livres para contribuir implementando novas funcionalidades, relatando erros ou sugestões. 
 
-*Os dados usados na pasta `exemples/` são fictícios, gerados por IA para simulação de dados pessoais.*
+## Introdução
 
+O projeto foi desenvolvido para estimular programadores de Júniors a Sêniors nos estudos e treinamentos de conceitos tanto de Python quanto de Versionamento, aplicados a um projeto, inicialmente simples de biblioteca de mascaramento com foco na **LGPD** (Lei Geral de Proteção de Dados) e no **tratamento de dados pessoais no contexto brasileiro**.  
+
+***Todos os dados sensíveis expostos neste repositório são fictícios, gerados por IA como ilustração para exibição de testes.***
 
 ## Níveis de Mascaramento
 
