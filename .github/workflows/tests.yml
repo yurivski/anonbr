@@ -26,4 +26,4 @@ jobs:
         run: uv sync --dev
 
       - name: Rodar testes
-        run: uv run pytest tests/ -v
+        run: uv run python -m pytest tests/ -v
