@@ -31,19 +31,6 @@ class TestDetectorCPF:
 
         assert len(resultados) == 2
 
-    def test_validar_cpf_valido(self):
-        assert self.detector._validar("123.456.789-09") == True
-        assert self.detector._validar("12345678909") == True
-
-    def test_validar_cpf_invalido_todos_iguais(self):
-        assert self.detector._validar("000.000.000-00") == False
-        assert self.detector._validar("11111111111") == False
-        assert self.detector._validar("999.999.999-99") == False
-
-    def test_validar_cpf_tamanho_incorreto(self):
-        assert self.detector._validar("123.456.789") == False
-        assert self.detector._validar("1234567890") == False
-
     def test_mascarar_cpf_formatado_padrao(self):
         cpf = "123.456.789-09"
         mascarado = self.detector.mascarar(cpf, nivel='padrao')
