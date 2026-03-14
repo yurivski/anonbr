@@ -45,7 +45,7 @@ def main():
         if df is None:
             return 1
 
-        anonimizador = Anonymizer(nivel='padrão')
+        anonimizador = Anonymizer(nivel='padrao')
         relatorio = anonimizador.relatorio(df)
 
         print("\n--- Dados sensíveis detectados ---")
