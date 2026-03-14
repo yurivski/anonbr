@@ -18,7 +18,7 @@ class Anonymizer:
     def __init__(self, nivel='padrao'):
         """
         Inicializa anonimizador com detectores.
-        nivel: Nível de mascaramento ('padrao', 'alto', 'minimo')
+        nivel: Nível de mascaramento ('padrao', 'alto', 'baixo')
         """
         self.nivel = nivel
         self.detector_cpf = DetectorCPF()
@@ -51,7 +51,7 @@ class Anonymizer:
         return None
     
     def _mascarar_valor(self, valor, tipo):
-        # Mascara valor individual baseado no tipo. Returna o valor mascarado ou original se inválido
+        # Mascara valor individual baseado no tipo. Retorna o valor mascarado ou original se inválido
         if pd.isna(valor):
             return valor
         
@@ -99,7 +99,7 @@ class Anonymizer:
     def relatorio(self, df):
         """
         Gera relatório de colunas com dados sensíveis detectados.
-        Returna Dict com informações das colunas detectadas
+        Retorna Dict com informações das colunas detectadas
         """
         resultado = {
             'cpf': [],
