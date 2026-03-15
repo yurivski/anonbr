@@ -6,70 +6,70 @@ preservando a estrutura do documento.
 import re
 from typing import Optional
 
-class DetectorCPF:
+class CPFDetector:
     # Detecta e mascara números de CPF nos padrões: 123.456.789-09 ou 12345678909
 
-    padrao_formatado = r'\b\d{3}\.\d{3}\.\d{3}-\d{2}\b'
-    padrao_nao_formatado = r'\b\d{11}\b'
+    formatted_pattern = r'\b\d{3}\.\d{3}\.\d{3}-\d{2}\b'
+    unformatted_pattern = r'\b\d{11}\b'
 
     def __init__(self):
-        self.regex_formatado = re.compile(self.padrao_formatado)
-        self.regex_nao_formatado = re.compile(self.padrao_nao_formatado)
+        self.formatted_regex = re.compile(self.formatted_pattern)
+        self.unformatted_regex = re.compile(self.unformatted_pattern)
 
-    def detectar(self, texto: str) -> list:
+    def detect(self, text: str) -> list:
         # detecta os números do CPF no texto
-        resultados = []
+        results = []
 
         # Buscar CPFs formatados
-        for match in self.regex_formatado.finditer(texto):
+        for match in self.formatted_regex.finditer(text):
             cpf = match.group()
-            resultados.append((cpf, match.start(), match.end(), True))
+            results.append((cpf, match.start(), match.end(), True))
 
-        for match in self.regex_nao_formatado.finditer(texto):
-            if not self._sobrepoe_formatado(match, resultados):
+        for match in self.unformatted_regex.finditer(text):
+            if not self._overlaps_formatted(match, results):
                 cpf = match.group()
-                resultados.append((cpf, match.start(), match.end(), False))
+                results.append((cpf, match.start(), match.end(), False))
 
-        return resultados
+        return results
 
-    def _sobrepoe_formatado(self, match, resultados_formatados):
+    def _overlaps_formatted(self, match, formatted_results):
         # verifica se match sobrepõe resultados já encontrados
-        inicio, fim = match.start(), match.end()
-        for _, f_inicio, f_fim, _ in resultados_formatados:
-            if not (fim <= f_inicio or inicio >= f_fim):
+        start, end = match.start(), match.end()
+        for _, f_start, f_end, _ in formatted_results:
+            if not (end <= f_start or start >= f_end):
                 return True
         return False
 
-    def mascarar(self, cpf: str, nivel: str = 'padrao') -> str:
+    def mask(self, cpf: str, level: str = 'default') -> str:
         """Mascara CPF preservando formato original.
             Níveis:
             alto:   XXX.XXX.XXX-XX (tudo mascarado)
             padrao: XXX.567.XXX-XX (revela meio)
             baixo:  XXX.XX9.567-01 (revela final)
         """
-        esta_formatado = '.' in cpf or '-' in cpf
-        numeros = re.sub(r'\D', '', cpf)
+        is_formatted = '.' in cpf or '-' in cpf
+        digits = re.sub(r'\D', '', cpf)
 
-        if nivel == 'alto':
-            mascarado = 'X' * 11
+        if level == 'high':
+            masked = 'X' * 11
 
-        elif nivel == 'baixo':
-            mascarado = 'X' * 6 + numeros[6:11]
+        elif level == 'low':
+            masked = 'X' * 6 + digits[6:11]
         else:
             # Padrão: revela meio
-            mascarado = 'X' * 3 + numeros[3:6] + 'X' * 5
+            masked = 'X' * 3 + digits[3:6] + 'X' * 5
 
-        if esta_formatado:
-            return f"{mascarado[:3]}.{mascarado[3:6]}.{mascarado[6:9]}-{mascarado[9:11]}"
+        if is_formatted:
+            return f"{masked[:3]}.{masked[3:6]}.{masked[6:9]}-{masked[9:11]}"
             
-        return mascarado
+        return masked
         
-def detectar_cpf(texto: str) -> list:
+def detect_cpf(text: str) -> list:
         # Helper function para detecção rápida
-        detector = DetectorCPF()
-        return detector.detectar(texto) 
+        detector = CPFDetector()
+        return detector.detect(text) 
 
-def mascarar_cpf(cpf: str, nivel: str = 'padrao') -> str:
+def mask_cpf(cpf: str, level: str = 'default') -> str:
         # Helper function para mascaramento rápido.
-        detector = DetectorCPF()
-        return detector.mascarar(cpf, nivel)
+        detector = CPFDetector()
+        return detector.mask(cpf, level)
