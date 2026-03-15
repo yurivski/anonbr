@@ -2,9 +2,9 @@
 
 O Anonbr tem como objetivo transformar dados sensíveis de formato padrão brasileiro para que documentos (atualmente apenas CSV) possam ser compartilhados de forma segura, sem exposição de dados pessoais, conforme a LGPD.
 
-> Contribua sem compromisso, talvez isso se transforme em algo grande, talvez não, o que importa é praticar e estudar. O projeto foi criado para estimular programadores de todos os níveis a praticarem Python, testes, versionamento e boas praticas de engenharia de dados, aplicados a um problema real: anonimizacao de dados pessoais no contexto brasileiro.
+> Contribua sem compromisso, **talvez isso se transforme em algo grande, talvez não**, o que importa é **praticar e estudar**. O projeto foi criado para estimular programadores de todos os níveis a praticarem **Python, testes, versionamento e boas praticas de engenharia de dados**, aplicados a um problema real: anonimizacao de dados pessoais no contexto brasileiro.
 
-Contribuições de qualquer nível são bem-vindas, desde correção de typos até novos detectores.
+***Contribuições de qualquer nível são bem-vindas, desde correção de typos até novos detectores.***
 
 ## Configurando o ambiente
 
@@ -65,9 +65,9 @@ tests/
 
 main.py  # Script de execucao
 ```
-Cada detector segue o mesmo padrão: uma classe com métodos `detectar` e `mascarar`, e funções auxiliares (helpers) fora da classe para uso rápido. A detecção é baseada em padrões visuais via regex, sem validação matemática. Isso é intencional: para anonimização, qualquer dado que pareça um CPF, email ou telefone deve ser mascarado.
+Cada detector segue o mesmo padrão: uma classe com métodos `detect` e `mask`, e funções auxiliares (helpers) fora da classe para uso rápido. A detecção é baseada em padrões visuais via regex, sem validação matemática. Isso é intencional: para anonimização, qualquer dado que pareça um CPF, email ou telefone deve ser mascarado.
 
-O mascaramento tem três níveis: alto (mascara tudo), padrão (equilíbrio) e baixo (revela mais). Novos detectores devem seguir esse mesmo padrão.
+O mascaramento tem três níveis: high (mascara tudo), default (equilíbrio) e low (revela mais). Novos detectores devem seguir esse mesmo padrão.
 
 ## Sugestões para contribuição
 
@@ -80,5 +80,4 @@ Não se limite a essa lista. Se identificar algo que pode melhorar, abra uma iss
 - Escreva testes para qualquer código novo
 - Não quebre testes existentes
 - Mantenha o código legível e com comentários onde necessário
-- Use nomes de variáveis em português, seguindo o padrão do projeto 
-- Docstrings podem ser em português ou inglês, desde que sejam claras
+- Textos de outputs em PT-BR, devido ao foco atual em dados com padrão brasileiro

@@ -20,7 +20,7 @@ O projeto foi desenvolvido para estimular programadores de Júniors a Sêniors n
 
 ## Níveis de Mascaramento
 
-| Dado| Alto | Padrão | Baixo | 
+| Dado| High | Default | Low | 
 |-----|------|--------|-------|
 | **CPF**| XXX.XXX.XXX-XX | XXX.567.XXX-XX | XXX.XX9.567-01 |
 | **Telefone** | +XX (XX) XXXXX-XXXX | +55 (21) XXXXX-5678 | +55 (21) XXXX2-3456 |
@@ -28,7 +28,7 @@ O projeto foi desenvolvido para estimular programadores de Júniors a Sêniors n
 
 A biblioteca oferece três níveis de privacidade. Cada nível controla quanta informação fica visível após o mascaramento.
 
-### Nível alto (mascara tudo)
+### Level high (mascara tudo)
 
 Oculta toda a informação. Útil quando nenhum dado pode ser revelado.
 
@@ -38,7 +38,7 @@ Oculta toda a informação. Útil quando nenhum dado pode ser revelado.
 | Email    | bruno.silva@empresa.com.br       | xxxxxxxxxx@xxxxxxx.xxx.xx        |
 | Telefone | (21) 98765-4321                 | (XX) XXXXX-XXXX                  |
 
-### Nível padrão (equilíbrio)
+### Level default (equilíbrio)
 
 Revela uma parte pequena para conferência, sem expor o dado completo.
 
@@ -48,7 +48,7 @@ Revela uma parte pequena para conferência, sem expor o dado completo.
 | Email    | bruno.silva@empresa.com.br       | bxxxxxxxxx@empresa.com.br        |
 | Telefone | (21) 98765-4321                 | (21) XXXXX-4321                  |
 
-### Nível baixo (revela mais)
+### Level low (revela mais)
 
 Revela mais informação. Útil para conferência em ambientes controlados.
 
@@ -86,7 +86,7 @@ de um domínio com pelo menos um ponto.
 
 ![lógica do email](images/logica_email.png)
 
-> **Padrão que o detector reconhece:**  
+> **Padrões que o detector reconhece:**  
 usuario@dominio.com  
 nome.sobrenome@empresa.com.br  
 usuario123@servidor.net  
@@ -123,11 +123,13 @@ Por exemplo, um CPF formatado sai formatado, e um CPF sem pontuação sai sem po
 
 ## Caso de Uso
 
-Você é DBA e recebe pedidos constantes de acesso ao banco para desenvolvimento. Não pode autorizar acesso direto (dados sensíveis em produção), mas a equipe precisa dos dados reais para trabalhar. Fazer exports manuais e editar cada campo sensível em Excel consome horas e é propenso a erros. O Anonbr automatiza esse processo: você exporta a tabela para CSV, executa a ferramenta (CPF: de 123.456.789-09 para XXX.XXX.789-XX, Email: de bruno@email.com para b***@email.com) e compartilha o arquivo com segurança. A equipe trabalha com dados reais sem expor informações pessoais.
+Você é DBA ou quem quer que seja e recebe pedidos constantes de acesso ao banco para desenvolvimento ou teste. Não pode autorizar acesso direto (dados sensíveis em produção), mas a equipe precisa dos dados numa quantidade real para desenvolver ou testar alguma funcionalidade de algo projeto ou ferramenta.
+
+Fazer exports manuais e editar cada campo sensível em Excel consome horas e é propenso a erros. O Anonbr automatiza esse processo: você exporta a tabela para CSV, executa a ferramenta (CPF: de 123.456.789-09 para XXX.XXX.789-XX, Email: de bruno@email.com para b***@email.com) e compartilha o arquivo com segurança. A equipe trabalha com dados reais sem expor informações pessoais.
 
 ## Execução
 
-Para rodar a anonimização no arquivo, instale as dependências do projeto:
+Atualmente para rodar a anonimização no arquivo você precisa fazer edições manuais seguindo os passos a seguir. Mas antes, instale as dependências do projeto:
 
 > **Com uv (gerenciamento de dependências)**  
 `uv sync` e execute `uv run main.py`
@@ -139,24 +141,24 @@ Crie o ambiente virtual: `python3 -m venv venv`, ative-o `source venv/bin/activa
 
 *Edite as linhas no arquivo `main.py`:*  
 
-Antes de executar o arquivo que irá detectar, mascarar e salvar como CSV automaticamente, edite as seguintes linhas:
+Em seguida, edite as seguintes linhas:
 
 ```python
 # Pasta `exemples` onde você moverá o arquivo CSV original e substitua `dados_teste_validacao.csv` pelo nome do arquivo.
-arquivo_entrada = os.path.join('exemples', 'dados_teste_validacao.csv')  
+input_file = os.path.join('exemples', 'dados_teste_validacao.csv')  
 
 # Pasta `anonymized_data` dentro de `exemples` onde ficará salvo o arquivo de saída.
-diretorio_saida = os.path.join('exemples', 'anonymized_data')
+output_directory = os.path.join('exemples', 'anonymized_data')
 
 # `censurados.csv` é o nome do arquivo de saída dentro da pasta `anonymized_data`.
-arquivo_saida = os.path.join(diretorio_saida, 'censurados.csv')
+output_file = os.path.join(output_directory, 'censurados.csv')
 ```  
 
-**Edite o nível de mascaramento entre: `padrao`, `alto` ou `baixo`:**
+**Edite o nível de mascaramento entre: `default`, `high` ou `low`:**
 
 ```python
 # Altere o nível do mascaramento conforme a prioridade:
-anonimizador = Anonymizer(nivel='padrao')
+anonymizer = Anonymizer(level='default')
 ```
 
 ![Nível de mascaramento](images/nivel_mascaramento.png)  
