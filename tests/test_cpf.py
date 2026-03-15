@@ -3,83 +3,83 @@ Arquivo teste para detecção, validação e mascaramento do CPF.
 """
 
 import pytest
-from anonbr.detectors.cpf import DetectorCPF, detectar_cpf, mascarar_cpf
+from anonbr.detectors.cpf import CPFDetector, detect_cpf, mask_cpf
 
-class TestDetectorCPF:
+class TestCPFDetector:
     def setup_method(self):
-        self.detector = DetectorCPF()
+        self.detector = CPFDetector()
 
-    def test_detectar_cpf_formatado(self):
-        texto = "Meu CPF é 375.096.646-08"
-        resultados = self.detector.detectar(texto)
+    def test_detect_formatted_cpf(self):
+        text = "Meu CPF é 375.096.646-08"
+        results = self.detector.detect(text)
 
-        assert len(resultados) == 1
-        assert resultados[0][0] == "375.096.646-08"
-        assert resultados[0][3] == True
+        assert len(results) == 1
+        assert results[0][0] == "375.096.646-08"
+        assert results[0][3] == True
 
-    def test_detectar_cpf_nao_formatado(self):
-        texto = "CPF: 37509664608"
-        resultados = self.detector.detectar(texto)
+    def test_detect_unformatted_cpf(self):
+        text = "CPF: 37509664608"
+        results = self.detector.detect(text)
 
-        assert len(resultados) == 1
-        assert resultados[0][0] == "37509664608"
-        assert resultados[0][3] == False
+        assert len(results) == 1
+        assert results[0][0] == "37509664608"
+        assert results[0][3] == False
 
-    def test_detectar_multiplos_cpfs(self):
-        texto = "CPF 1: 375.096.646-08 e CPF 2: 41358800960"
-        resultados = self.detector.detectar(texto)
+    def test_detect_multiple_cpfs(self):
+        text = "CPF 1: 375.096.646-08 e CPF 2: 41358800960"
+        results = self.detector.detect(text)
 
-        assert len(resultados) == 2
+        assert len(results) == 2
 
-    def test_mascarar_cpf_formatado_padrao(self):
+    def test_mask_formatted_cpf_default(self):
         cpf = "123.456.789-09"
-        mascarado = self.detector.mascarar(cpf, nivel='padrao')
+        masked = self.detector.mask(cpf, level='default')
 
-        assert mascarado == "XXX.456.XXX-XX"
+        assert masked == "XXX.456.XXX-XX"
 
-    def test_mascarar_cpf_nao_formatado_padrao(self):
+    def test_mask_unformatted_cpf_default(self):
         cpf = "19162686001"
-        mascarado = self.detector.mascarar(cpf, nivel='padrao')
+        masked = self.detector.mask(cpf, level='default')
 
-        assert mascarado == "XXX626XXXXX"
+        assert masked == "XXX626XXXXX"
 
-    def test_mascarar_cpf_nivel_alto(self):
+    def test_mask_cpf_high_level(self):
         cpf = "123.456.789.09"
-        mascarado = self.detector.mascarar(cpf, nivel='alto')
-        
-        assert mascarado == "XXX.XXX.XXX-XX"
+        masked = self.detector.mask(cpf, level='high')
 
-    def test_mascarar_cpf_nao_formatado_nivel_alto(self):
+        assert masked == "XXX.XXX.XXX-XX"
+
+    def test_mask_unformatted_cpf_high_level(self):
         cpf = "19162686001"
-        mascarado = self.detector.mascarar(cpf, nivel='alto')
+        masked = self.detector.mask(cpf, level='high')
 
-        assert mascarado == "XXXXXXXXXXX"
+        assert masked == "XXXXXXXXXXX"
 
-    def test_mascarar_preserva_formato(self):
-        cpf_formatado = "91.626.860-01"
-        cpf_nao_formatado = "9162686001"
+    def test_mask_preserves_format(self):
+        formatted_cpf = "91.626.860-01"
+        unformatted_cpf = "9162686001"
 
-        assert '.' in self.detector.mascarar(cpf_formatado)
-        assert '-' in self.detector.mascarar(cpf_formatado)
-        assert '.' not in self.detector.mascarar(cpf_nao_formatado)
-        assert '-' not in self.detector.mascarar(cpf_nao_formatado)
+        assert '.' in self.detector.mask(formatted_cpf)
+        assert '-' in self.detector.mask(formatted_cpf)
+        assert '.' not in self.detector.mask(unformatted_cpf)
+        assert '-' not in self.detector.mask(unformatted_cpf)
 
-class TestHelperCPF:
-    def test_helper_detectar_cpf(self):
-        texto = "CPF: 375.096.646-08"
-        resultados = detectar_cpf(texto)
+class TestCPFHelper:
+    def test_helper_detect_cpf(self):
+        text = "CPF: 375.096.646-08"
+        results = detect_cpf(text)
 
-        assert len(resultados) == 1
-        assert "375.096.646-08" in resultados[0][0]
+        assert len(results) == 1
+        assert "375.096.646-08" in results[0][0]
 
-    def test_helper_mascarar_cpf(self):
+    def test_helper_mask_cpf(self):
         cpf = "123.456.789-09"
-        mascarado = mascarar_cpf(cpf)
+        masked = mask_cpf(cpf)
 
-        assert "XXX" in mascarado
+        assert "XXX" in masked
 
-    def test_helper_mascarar_cpf_nivel_alto(self):
+    def test_helper_mask_cpf_high_level(self):
         cpf = "123.456.789-09"
-        mascarado = mascarar_cpf(cpf, nivel='alto')
+        masked = mask_cpf(cpf, level='high')
 
-        assert mascarado == "XXX.XXX.XXX-XX"
+        assert masked == "XXX.XXX.XXX-XX"
