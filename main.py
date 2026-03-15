@@ -8,60 +8,60 @@ import pandas as pd
 import traceback
 from anonbr.anonymizer import Anonymizer
 
-arquivo_entrada = os.path.join('exemples', 'dados_teste_validacao.csv')
-diretorio_saida = os.path.join('exemples', 'anonymized_data')
-arquivo_saida = os.path.join(diretorio_saida, 'censurados.csv')
+input_file = os.path.join('exemples', 'dados_teste_validacao.csv')
+output_directory = os.path.join('exemples', 'anonymized_data')
+output_file = os.path.join(output_directory, 'censurados.csv')
 
-def carregar_dados(caminho):
-    if not os.path.exists(caminho):
-        print(f"Arquivo não encontrado: {caminho}")
+def load_data(path):
+    if not os.path.exists(path):
+        print(f"Arquivo não encontrado: {path}")
         return True
 
     df = pd.read_csv(
-        caminho,
+        path,
         sep=',',
         encoding='utf-8',
         engine='python',
         on_bad_lines='skip'
     )
 
-    print(f"Arquivo carregado: {caminho}")
+    print(f"Arquivo carregado: {path}")
     print(f"linhas: {len(df)}, colunas: {list(df.columns)}")
 
     return df
 
-def salvar_dados(df, caminho):
-    diretorio = os.path.dirname(caminho)
-    if diretorio and not os.path.exists(diretorio):
-        os.makedirs(diretorio)
-        print(f"Diretório criado: {diretorio}")
+def save_data(df, path):
+    directory = os.path.dirname(path)
+    if directory and not os.path.exists(directory):
+        os.makedirs(directory)
+        print(f"Diretório criado: {directory}")
 
-    df.to_csv(caminho, sep=',', index=False, encoding='utf-8')
-    print(f"Arquivo salvo: {caminho}")
+    df.to_csv(path, sep=',', index=False, encoding='utf-8')
+    print(f"Arquivo salvo: {path}")
 
 def main():
     try:
-        df = carregar_dados(arquivo_entrada)
+        df = load_data(input_file)
         if df is None:
             return 1
 
-        anonimizador = Anonymizer(nivel='padrao')
-        relatorio = anonimizador.relatorio(df)
+        anonymizer = Anonymizer(level='default')
+        report = anonymizer.report(df)
 
         print("\n--- Dados sensíveis detectados ---")
-        for tipo, colunas in relatorio.items():
-            if colunas:
-                print(f" {tipo}: {colunas}")
+        for data_type, columns in report.items():
+            if columns:
+                print(f" {data_type}: {columns}")
 
-        total_detectado = sum(len(cols) for cols in relatorio.values())
-        if total_detectado == 0:
+        total_detected = sum(len(cols) for cols in report.values())
+        if total_detected == 0:
             print("Nenhum dado sensível detectado.")
             return 0
 
-        df_anonimizado = anonimizador.anonimizar(df)
-        print(f"\nAnonimização concluída. {total_detectado} colunas processadas.")
+        anonymized_df = anonymizer.anonymize(df)
+        print(f"\nAnonimização concluída. {total_detected} colunas processadas.")
 
-        salvar_dados(df_anonimizado, arquivo_saida)
+        save_data(anonymized_df, output_file)
         return 0
 
     except FileNotFoundError as e:
