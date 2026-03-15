@@ -6,9 +6,9 @@ __version__ = '1.0'
 __author__ = 'Yuri Pontes'
 __license__ = 'MIT'
 
-from anonbr.detectors.cpf import DetectorCPF, detectar_cpf, mascarar_cpf
-from anonbr.detectors.email import DetectorEmail, detectar_email, mascarar_email
-from anonbr.detectors.telefone import DetectorTelefone, detectar_telefone, mascarar_telefone
+from anonbr.detectors.cpf import CPFDetector, detect_cpf, mask_cpf
+from anonbr.detectors.email import EmailDetector, detect_email, mask_email
+from anonbr.detectors.telefone import PhoneDetector, detect_phone, mask_phone
 from anonbr.anonymizer import Anonymizer
 
 __all__ = [
@@ -16,19 +16,19 @@ __all__ = [
     'Anonymizer',
 
     # Classes detectores
-    'DetectorCPF',
-    'DetectorEmail',
-    'DetectorTelefone',
+    'CPFDetector',
+    'EmailDetector',
+    'PhoneDetector',
     
     # Funções auxiliares - CPF
-    'detectar_cpf',
-    'mascarar_cpf',
+    'detect_cpf',
+    'mask_cpf',
     
     # Funções auxiliares - Email
-    'detectar_email',
-    'mascarar_email',
+    'detect_email',
+    'mask_email',
     
     # Funções auxiliares - Telefone
-    'detectar_telefone',
-    'mascarar_telefone',
+    'detect_phone',
+    'mask_phone',
 ]
