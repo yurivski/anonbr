@@ -14,9 +14,10 @@ from anonbr.anonymizer import Anonymizer
 def load_data(path, separator):
     # Lê o CSV e retorna um DataFrame:
     if not os.path.exists(path):
-        print(f"Arquivo não encontrado: {path}")
+        print(f"\nArquivo não encontrado: {path}")
         return None
 
+    # Configuração padrão
     df = pd.read_csv(
         path,
         sep=separator,
@@ -25,8 +26,7 @@ def load_data(path, separator):
         on_bad_lines='skip'
     )
 
-    print()
-    print(f"Arquivo carregado: {path}")
+    print(f"\nArquivo carregado: {path}")
     print(f"Linhas: {len(df)}, Colunas: {list(df.columns)}")
     
     return df
@@ -39,8 +39,7 @@ def save_data(df, path, separator):
         print(f"Diretório criado: {directory}")
 
     df.to_csv(path, sep=separator, index=False, encoding='utf-8')
-    print(f"Arquivo salvo: {path}")
-    print()
+    print(f"Arquivo salvo: {path}\n")
 
 # Cores: não tente editar, senão vai ficar piscando kkkkkk
 DARK_BLUE = '\033[38;5;20m'
@@ -65,19 +64,16 @@ logo = f'''{BOLD}{WHITE}
 ██║  ██║██║ ╚████║╚██████╔╝██║ ╚████║      {GREEN}██████╔╝██║  ██║{WHITE}
 ╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═══╝      {GREEN}╚═════╝ ╚═╝  ╚═╝{RESET}'''
 
+spacebar = " " * 20
 def create_parser():
     parser = argparse.ArgumentParser(
         prog='ATENÇÃO',
         # Formatação proposital para exibição mais organizada no terminal.
-        usage='''LinkedIn: Yuri Pontes
-
-  -h, --help        Show this help message and exit
+        usage=f'''LinkedIn: Yuri Pontes\n
   -i, --input       Local e o nome do arquivo (ex: documentos/dados.csv)
   -o, --output      Destino e o nome do arquivo. (padrão: dados_censurados.csv)
   -l, --level       Nível de censura dos dados.
-                    default: padrão
-                    high: alto
-                    low: baixo
+{spacebar}default: padrão \n{spacebar}high: alto \n{spacebar}low: baixo
   -s, --sep         Separador do CSV. (padrão: vírgula)
   -r, --report      Exibe relatório de colunas com dados sensíveis detectados.
   ''',
