@@ -42,6 +42,7 @@ def save_data(df, path, separator):
     print(f"Arquivo salvo: {path}")
     print()
 
+# Cores: não tente editar, senão vai ficar piscando kkkkkk
 DARK_BLUE = '\033[38;5;20m'
 NAVY = '\033[38;5;18m'
 BLUE = '\033[34m'
@@ -49,18 +50,20 @@ GREEN = '\033[32m'
 CYAN = '\033[36m'
 RED = '\033[31m'
 BOLD = '\033[1m'
+WHITE = '\033[37m'
 RESET = '\033[0m'
 
-""" Para adicionar cor, você deve substituir as aspas simples por uma das cores da lista acima,
-    em seguida RESET. Ex.: {GREEN}          {RESET}, se excluir o segundo colchetes (RESET) todas 
-    as informações ficarão coma a cor escolhida.""" 
-logo = f'''{''}
- █████╗ ███╗   ██╗ ██████╗ ███╗   ██╗      ██████╗ ██████╗
-██╔══██╗████╗  ██║██╔═══██╗████╗  ██║      ██╔══██╗██╔══██╗
-███████║██╔██╗ ██║██║   ██║██╔██╗ ██║█████╗██████╔╝██████╔╝
-██╔══██║██║╚██╗██║██║   ██║██║╚██╗██║╚════╝██╔══██╗██╔══██╗
-██║  ██║██║ ╚████║╚██████╔╝██║ ╚████║      ██████╔╝██║  ██║
-╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═══╝      ╚═════╝ ╚═╝  ╚═╝{''}'''
+""" O BOLD serve para deixar a cor mais viva/ brilhante, no formato atual ANON- está em branco
+    e BR em verde. Se remover o RESET vai colorir todo o texto de saída no terminal."""
+
+# Pois é, parece uma gambiarra do krl, mas tá bonito no terminal. 
+logo = f'''{BOLD}{WHITE}
+ █████╗ ███╗   ██╗ ██████╗ ███╗   ██╗      {GREEN}██████╗ ██████╗ {WHITE}
+██╔══██╗████╗  ██║██╔═══██╗████╗  ██║      {GREEN}██╔══██╗██╔══██╗{WHITE}
+███████║██╔██╗ ██║██║   ██║██╔██╗ ██║█████╗{GREEN}██████╔╝██████╔╝{WHITE}
+██╔══██║██║╚██╗██║██║   ██║██║╚██╗██║╚════╝{GREEN}██╔══██╗██╔══██╗{WHITE}
+██║  ██║██║ ╚████║╚██████╔╝██║ ╚████║      {GREEN}██████╔╝██║  ██║{WHITE}
+╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═══╝      {GREEN}╚═════╝ ╚═╝  ╚═╝{RESET}'''
 
 def create_parser():
     parser = argparse.ArgumentParser(
