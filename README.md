@@ -8,9 +8,11 @@
 
 Biblioteca Python para detectar e mascarar dados pessoais sensíveis em DataFrames.
 
-Este projeto nasceu de uma necessidade real identificada em posts do Linkedin, em que DEVs e analistas ficam P* da vida com DBAs que não dão acesso ao banco de dados para o desenvolvimento de seus respectivos projetos. Identifica automaticamente [CPF](#cpf), [email](#email) e [Telefone](#telefone) em colunas e aplica mascaramento com [três níveis de privacidade.](#níveis-de-mascaramento)  
+Este projeto nasceu após eu identificar em alguns posts do LinkedIn em que devs e analistas ficam P* da vida com DBAs (ou quem quer que seja) que não liberam acesso ao banco de dados para o desenvolvimento ou testes. Identifica automaticamente [CPF](#cpf), [email](#email) e [Telefone](#telefone) em colunas e aplica mascaramento com [três níveis de privacidade.](#níveis-de-mascaramento)  
 
-> **Contribua sem comprimisso**, vamos escrever códigos bugados e desbugar **em prol do desenvolvimento pessoal e profissional.** Sintam-se livres para contribuir implementando novas funcionalidades, relatando erros ou sugestões. 
+> [**Contribua sem comprimisso**](/CONTRIBUTING.md), vamos escrever códigos bugados e desbugar **em prol do desenvolvimento pessoal e profissional.** Sintam-se livres para contribuir implementando novas funcionalidades, relatando erros ou sugestões. 
+
+*Leia o [**CONTRIBUTING.md**](/CONTRIBUTING.md) para mais detalhes.*
 
 ## Introdução
 
@@ -117,42 +119,7 @@ O mascaramento segue três etapas em todos os detectores:
 2. Montar a versão mascarada substituindo posições por `X` ou `x`  
 3. Reconstruir o formato original (pontos, hifens, parênteses, `@`)  
 
-Isso garante que o dado mascarado mantém a mesma estrutura visual do original.  
-
-Por exemplo, um CPF formatado sai formatado, e um CPF sem pontuação sai sem pontuação.
-
-## Caso de Uso
-
-Você é DBA ou quem quer que seja e recebe pedidos constantes de acesso ao banco para desenvolvimento ou teste. Não pode autorizar acesso direto (dados sensíveis em produção), mas a equipe precisa dos dados numa quantidade real para desenvolver ou testar alguma funcionalidade de algo projeto ou ferramenta.
-
-Fazer exports manuais e editar cada campo sensível em Excel consome horas e é propenso a erros. O Anonbr automatiza esse processo: você exporta a tabela para CSV, executa a ferramenta (CPF: de 123.456.789-09 para XXX.XXX.789-XX, Email: de bruno@email.com para b***@email.com) e compartilha o arquivo com segurança. A equipe trabalha com dados reais sem expor informações pessoais.
-
-## Execução
-
-Atualmente para rodar a anonimização no arquivo você precisa fazer edições manuais seguindo os passos a seguir. Mas antes, instale as dependências do projeto:
-
-> **Com uv (gerenciamento de dependências)**  
-`uv sync` e execute `uv run main.py`
-
-ou  
-
-> **Com ambiente virtual:**  
-Crie o ambiente virtual: `python3 -m venv venv`, ative-o `source venv/bin/activate`, depois `pip install -e "."` ou `pip install -r requirements.txt`, execute o arquivo `python3 main.py`  
-
-*Edite as linhas no arquivo `main.py`:*  
-
-Em seguida, edite as seguintes linhas:
-
-```python
-# Pasta `exemples` onde você moverá o arquivo CSV original e substitua `dados_teste_validacao.csv` pelo nome do arquivo.
-input_file = os.path.join('exemples', 'dados_teste_validacao.csv')  
-
-# Pasta `anonymized_data` dentro de `exemples` onde ficará salvo o arquivo de saída.
-output_directory = os.path.join('exemples', 'anonymized_data')
-
-# `censurados.csv` é o nome do arquivo de saída dentro da pasta `anonymized_data`.
-output_file = os.path.join(output_directory, 'censurados.csv')
-```  
+Isso garante que o dado mascarado mantém a mesma estrutura visual do original. Por exemplo, um CPF formatado sai formatado, e um CPF sem pontuação sai sem pontuação.  
 
 **Edite o nível de mascaramento entre: `default`, `high` ou `low`:**
 
@@ -163,13 +130,73 @@ anonymizer = Anonymizer(level='default')
 
 ![Nível de mascaramento](images/nivel_mascaramento.png)  
 
+## Caso de Uso
+
+Você é DBA ou quem quer que seja e recebe pedidos constantes de acesso ao banco para desenvolvimento ou teste. Não pode autorizar acesso direto (dados sensíveis em produção), mas a equipe precisa dos dados numa quantidade real para desenvolver ou testar alguma funcionalidade de algo projeto ou ferramenta.
+
+Fazer exports manuais e editar cada campo sensível em Excel consome horas e é propenso a erros. O Anonbr automatiza esse processo: você exporta a tabela para CSV, executa a ferramenta (CPF: de 123.456.789-09 para XXX.XXX.789-XX, Email: de bruno@email.com para b***@email.com) e compartilha o arquivo com segurança. A equipe trabalha com dados reais sem expor informações pessoais.
+
+## Configuração do ambiente
+
+Ao clonar o repositório você precisa instalar as dependências necessárias e configurar o ambiente virtual:
+
+> **Com uv (gerenciamento de dependências)**  
+`uv sync` e execute `uv run main.py`
+
+ou  
+
+> **Com ambiente virtual:**  
+Crie o ambiente virtual: `python3 -m venv venv`, ative-o `source venv/bin/activate`, depois `pip install -e "."` ou `pip install -r requirements.txt`, execute o arquivo `python3 main.py`  
+
+
+## Execução
+
+Para realizar a anonimização existe apenas um comando mínimo e obrigatório: `[-i]` `[--inpup]` seguido da pasta e o nome do arquivo. 
+
+
+**Comando básico:**
+> Comando completo: `uv run main.py -i documentos/arquivo.csv`  
+*Output padrão: anonbr/dados_censurados.csv*. 
+
+### Lista de comandos:
+
+A lista de comandos irá aparecer no terminal caso execute o arquivo sem nenhum comando: `uv run main.py`
+
+![Terminal](images/cli.png)
+
+```
+  -h, --help        Show this help message and exit  
+  -i, --input       Local e o nome do arquivo (ex: documentos/dados.csv)  
+  -o, --output      Destino e o nome do arquivo. (padrão: dados_censurados.csv)  
+  -l, --level       Nível de censura dos dados.  
+                    default: padrão  
+                    high: alto  
+                    low: baixo  
+  -s, --sep         Separador do CSV. (padrão: vírgula)  
+  -r, --report      Exibe relatório de colunas com dados sensíveis detectados.  
+  ```
+
+**Exemplo de comando completo:** `uv run main.py -i documentos/Relatório_de_Atendimento_de_RH_Saúde.csv -o documentos/relatorio_de_atendimento_de_rh_saude.csv -l high -r`  
+
+**Imagem do output:** 
+
+![Exemplo output](images/exemplo_output.png)
+
+**Explicação:** O usuário inseriu o local e o nome da planilha de origem `documentos/Relatório_de_Atendimento_de_RH_Saúde.csv`, definiu o local e o nome da planilha de destino `documentos/relatorio_de_atendimento_de_rh_saude.csv`, definiu o nível de sencura `-l high` (alto), e escolheu exibir detalhes dos dados detectados no terminal `-r`.  
+
+Observe que não foi definido o separador `-s`, normalmente as planilas CSVs são separadas por vírgula, então esse foi o argumento padrão definido, caso a planilha esteja separada com ponto e vírgula, basta usar `-s ;`.
+
+> **Importante:** O nome do arquivo de origem e de destino **devem** ser separados por underscore (_).   
+***Exemplo:*** relatorio_2025.pdf
+Se o arquivo original não seguir esse padrão, será necessário renomeá-lo.
+
 ## Tecnologias  
 
 - Python 3.8+
 - pandas (processamento de DataFrames)
-- re (expressoes regulares, biblioteca padrao)
+- re (expressões regulares, biblioteca padrão)
 - pytest (testes)
-- uv (gerenciamento de dependencias)  
+- uv (gerenciamento de dependências)  
 
 ## Autor
 ***Yuri Pontes***  

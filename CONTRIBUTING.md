@@ -71,9 +71,9 @@ O mascaramento tem três níveis: high (mascara tudo), default (equilíbrio) e l
 
 ## Sugestões para contribuição
 
-O projeto precisa de ajuda em diversas frentes. Algumas ideias: corrigir erros de escrita na documentação, adicionar edge cases nos testes existentes, traduzir o README para inglês, implementar novos detectores (CNPJ, RG, CEP, CNH), adicionar CLI com argparse no `main.py` para aceitar argumentos via terminal, suporte a separador configurável no CSV, exportar relatório de auditoria mostrando quais colunas foram mascaradas e quantos registros processados, suporte a processamento em batch com múltiplos arquivos e publicar o pacote no PyPI.
+O projeto precisa de ajuda em diversas frentes. Algumas ideias: corrigir erros de escrita na documentação, adicionar edge cases nos testes existentes, traduzir o README para inglês, implementar novos detectores (CNPJ, RG, CEP, CNH), exportar relatório de auditoria mostrando quais colunas foram mascaradas e quantos registros processados, suporte a processamento em batch com múltiplos arquivos, etc.
 
-Não se limite a essa lista. Se identificar algo que pode melhorar, abra uma issue ou mande um PR.
+> Não se limite a essa lista. Se identificar algo que pode melhorar, abra uma issue ou mande um PR.
 
 ## Regras gerais
 
