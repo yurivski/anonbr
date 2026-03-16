@@ -122,8 +122,10 @@ def create_parser():
     return parser
 
 def main():
+    # Imprime a logo (ANON-BR) no terminal 
     textwrap.dedent = logo
     print(logo)
+    
     # Parseia os argumentos no terminal
     parser = create_parser()
     args = parser.parse_args()
