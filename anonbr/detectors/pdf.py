@@ -31,12 +31,12 @@ class PDFDetector:
     @property
     def pattern(self):
         return {
-            'cpf_formatted': self.detector_cpf.regex_formatado,
-            'cpf_unformatted': self.detector_cpf.regex_nao_formatado,
-            'email': self.detector_email.regex,
-            'phone_international': self.detector_telefone.regexes[0],
-            'phone_ddd': self.detector_telefone.regexes[1],
-            'phone_digits': self.detector_telefone.regexes[2],
+            'cpf_formatted': self.detect_cpf.formatted_regex,
+            'cpf_unformatted': self.detect_cpf.unformatted_regex,
+            'email': self.detect_email.regex,
+            'phone_international': self.detect_phone.regexes[0],
+            'phone_ddd': self.detect_phone.regexes[1],
+            'phone_digits': self.detect_phone.regexes[2],
         }
 
     # Função de detecção
@@ -116,7 +116,7 @@ class PDFDetector:
         ]
 
         for data_type, pattern_name in pattern_order:
-            regex = self.patterns[pattern_name]
+            regex = self.pattern[pattern_name]
 
             for match in regex.finditer(text):
                 start, end = match.start(), match.end()
