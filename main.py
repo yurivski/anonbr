@@ -10,6 +10,7 @@ import traceback
 import argparse
 import textwrap
 from anonbr.anonymizer import Anonymizer
+from anonbr.detectors.pdf import PDFDetector
 
 def load_data(path, separator):
     # Lê o CSV e retorna um DataFrame:
@@ -119,7 +120,6 @@ def create_parser():
 
 def main():
     # Imprime a logo (ANON-BR) no terminal 
-    textwrap.dedent = logo
     print(logo)
     
     # Parseia os argumentos no terminal
@@ -127,7 +127,17 @@ def main():
     args = parser.parse_args()
 
     try:
-        # carregar
+        if args.input.endswith('.pdf'):
+            # Fluxo PDF
+            detector = PDFDetector(level=args.level)
+            output = args.output if args.output != 'dados_censurados.csv' else 'censurado.pdf'
+            summary = detector.mask(args.input, output)
+            print(f"\nRedação concluída.")
+            print(f"CPFs: {summary['cpf']}, Emails: {summary['email']}, Telefones: {summary['phone']}")
+            print(f"Páginas processadas: {summary['pages_processed']}")
+            print(f"Arquivo salvo: {output}")
+            return 0
+
         df = load_data(args.input, args.sep)
         if df is None:
             return 1
@@ -161,7 +171,7 @@ def main():
         save_data(df_anonymized, args.output, args.sep)
         return 0
 
-    except FileExistsError as e:
+    except FileNotFoundError as e:
         print(f"Arquivo não encontrado: {e}")
         return 1
     except Exception as e:
