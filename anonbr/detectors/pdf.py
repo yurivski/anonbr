@@ -4,7 +4,10 @@ usando redação pra preservar o layout do documento.
 """
 
 import re
-import fitz  # pymupdf
+import fitz
+from anonbr.detectors.cpf import CPFDetector
+from anonbr.detectors.email import EmailDetector
+from anonbr.detectors.telefone import PhoneDetector
 
 
 class PDFDetector:
@@ -14,20 +17,27 @@ class PDFDetector:
     preservando a estrutura original do documento.
     """
 
-    # Padrões visuais com regex 
-    patterns = {
-        'cpf_formatted': re.compile(r'\b\d{3}\.\d{3}\.\d{3}-\d{2}\b'),
-        'cpf_unformatted': re.compile(r'\b\d{11}\b'),
-        'email': re.compile(r'\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b'),
-        'phone_international': re.compile(r'\+55\s?\(?\d{2}\)?\s?\d{4,5}-?\d{4}'),
-        'ddd_phone': re.compile(r'\(?\d{2}\)?\s?\d{4,5}-?\d{4}'),
-        'phone_digits': re.compile(r'\b\d{10,11}\b'),
-    }
-
     def __init__(self, level='default'):
 
         # Níveis: high, default e low
         self.level = level
+        self.detect_cpf = CPFDetector()
+        self.detect_email = EmailDetector()
+        self.detect_phone = PhoneDetector()
+
+    """Reutiliza os regex das classes dos arquivos cpf, email e telefone para usar como base
+    pra não ficar definindo os mesmos padrões"""
+    # Pega os atributos da classes já definidas e organiza num dicionário.
+    @property
+    def pattern(self):
+        return {
+            'cpf_formatted': self.detector_cpf.regex_formatado,
+            'cpf_unformatted': self.detector_cpf.regex_nao_formatado,
+            'email': self.detector_email.regex,
+            'phone_international': self.detector_telefone.regexes[0],
+            'phone_ddd': self.detector_telefone.regexes[1],
+            'phone_digits': self.detector_telefone.regexes[2],
+        }
 
     # Função de detecção
     def detect(self, pdf_path: str) -> dict:
