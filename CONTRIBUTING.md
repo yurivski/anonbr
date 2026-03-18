@@ -56,11 +56,13 @@ anonbr/
 └── detectors/
     ├── cpf.py  # Detecção e mascaramento de CPF
     ├── email.py  # Detecção e mascaramento de email
+    ├── pdf.py  # Detecção e mascaramento de PDF
     └── telefone.py  # Detecção e mascaramento de telefone
 
 tests/
 ├── test_cpf.py
 ├── test_email.py
+├── test_pdf.py 
 └── test_telefone.py
 
 main.py  # Script de execucao
@@ -71,7 +73,7 @@ O mascaramento tem três níveis: high (mascara tudo), default (equilíbrio) e l
 
 ## Sugestões para contribuição
 
-O projeto precisa de ajuda em diversas frentes. Algumas ideias: corrigir erros de escrita na documentação, adicionar edge cases nos testes existentes, traduzir o README para inglês, implementar novos detectores (CNPJ, RG, CEP, CNH), exportar relatório de auditoria mostrando quais colunas foram mascaradas e quantos registros processados, suporte a processamento em batch com múltiplos arquivos, etc.
+O projeto precisa de ajuda em diversas frentes. Algumas ideias: corrigir erros de escrita na documentação, implementar novos detectores (CNPJ, RG, CEP, CNH), suporte a processamento em batch com múltiplos arquivos, etc.
 
 > Não se limite a essa lista. Se identificar algo que pode melhorar, abra uma issue ou mande um PR.
 

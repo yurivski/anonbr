@@ -20,6 +20,27 @@ O projeto foi desenvolvido para estimular programadores de Júniors a Sêniors n
 
 ***Todos os dados sensíveis expostos neste repositório são fictícios, gerados por IA como ilustração para exibição de testes.***
 
+## Atualizações
+
+**v1.0.0 -** Censura CPF, E-Mail e Telefone apenas em arquivos CSV.
+
+**v1.5.0 -** ***Nova funcionalidade:*** Censura de dados em **PDF** sem quebrar o formato do arquivo.
+
+[**CLIQUE AQUI - RESUMO DAS FUNCIONALIDADES E EXEMPLO DE MASCARAMENTO.**](#funcionalidades---resumo)
+
+## SUMÁRIO
+
+[**#1** - NÍVEIS DE MASCARAMENTO](#níveis-de-mascaramento)  
+[**#2** - ARQUITETURA DO PROJETO](#arquitetura-do-projeto)  
+[**#3** - COMO FUNCIONA A DETECÇÃO](#como-funciona-a-detecção)  
+[**#4** - COMO FUNCIONA O MASCARAMENTO](#como-funciona-o-mascaramento)  
+[**#5** - CASO DE USO](#caso-de-uso)  
+[**#6** - CONFIGURAÇÃO DO AMBIENTE](#configuração-do-ambiente)  
+[**#7** - EXECUÇÃO DA FERRAMENTA](#execução)  
+[**#8** - LISTA DE COMANDOS](#lista-de-comandos)  
+[**#9** - TECNOLOGIAS](#tecnologias)  
+[**#10** - AUTOR](#autor)  
+
 ## Níveis de Mascaramento
 
 | Dado| High | Default | Low | 
@@ -130,11 +151,48 @@ anonymizer = Anonymizer(level='default')
 
 ![Nível de mascaramento](images/nivel_mascaramento.png)  
 
+## Funcionalidades - RESUMO
+
+Censura dados sensíveis em arquivos CSV e PDF sem quebrar a estrutura do arquivo, com três níveis de formatação: **default, high, low**. Exemplos de dados alvos da ferramenta atualmente e extensões disponíveis, mascaradas em formato **DEFAULT**:
+
+<table style="margin-left: auto; margin-right: auto; text-align: center; border-collapse: collapse;">
+  <caption><strong>DADOS E EXTENSÕES DISPONÍVEIS</strong></caption>
+  <thead>
+    <tr>
+      <th style="border: 1px solid #ccc; padding: 10px;"></th>
+      <th style="border: 1px solid #ccc; padding: 10px;">CPF</th>
+      <th style="border: 1px solid #ccc; padding: 10px;">E-Mail</th>
+      <th style="border: 1px solid #ccc; padding: 10px;">Telefone</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="border: 1px solid #ccc; padding: 10px;"><strong>CSV</strong></td>
+      <td style="border: 1px solid #ccc; padding: 10px;">✔️</td>
+      <td style="border: 1px solid #ccc; padding: 10px;">✔️</td>
+      <td style="border: 1px solid #ccc; padding: 10px;">✔️</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #ccc; padding: 10px;"><strong>PDF</strong></td>
+      <td style="border: 1px solid #ccc; padding: 10px;">✔️</td>
+      <td style="border: 1px solid #ccc; padding: 10px;">✔️</td>
+      <td style="border: 1px solid #ccc; padding: 10px;">✔️</td>
+    </tr>
+  </tbody>
+</table>
+
+### Exemplo de mascaramento padrão:
+| Expensão | CPF | E-Mail |Telefone |
+|----------|---------|--------|-|
+| **CSV** | XXX.096.XXX-XX | bxxxxxxxxx@empresa.com |(21) XXXXX-4321|
+| **PDF** | ███.096.███-██ | b█████████@empresa.com |(21) █████-4321|
+
+
 ## Caso de Uso
 
 Você é DBA ou quem quer que seja e recebe pedidos constantes de acesso ao banco para desenvolvimento ou teste. Não pode autorizar acesso direto (dados sensíveis em produção), mas a equipe precisa dos dados numa quantidade real para desenvolver ou testar alguma funcionalidade de algo projeto ou ferramenta.
 
-Fazer exports manuais e editar cada campo sensível em Excel consome horas e é propenso a erros. O Anonbr automatiza esse processo: você exporta a tabela para CSV, executa a ferramenta (CPF: de 123.456.789-09 para XXX.XXX.789-XX, Email: de bruno@email.com para b***@email.com) e compartilha o arquivo com segurança. A equipe trabalha com dados reais sem expor informações pessoais.
+Fazer exports manuais e editar cada campo sensível em Excel consome horas e é propenso a erros. O Anonbr automatiza esse processo: você exporta o arquivo para a [**extenção disponível**](#funcionalidades---resumo), executa a ferramenta (CPF: de 123.456.789-09 para XXX.XXX.789-XX, Email: de bruno@email.com para bxxx@email.com, **para PDFs usa tarjas pretas**) e compartilha o arquivo com segurança. A equipe trabalha com dados reais sem expor informações pessoais.
 
 ## Configuração do ambiente
 
@@ -164,8 +222,7 @@ A lista de comandos irá aparecer no terminal caso execute o arquivo sem nenhum 
 
 ![Terminal](images/cli.png)
 
-```
-  -h, --help        Show this help message and exit  
+``` 
   -i, --input       Local e o nome do arquivo (ex: documentos/dados.csv)  
   -o, --output      Destino e o nome do arquivo. (padrão: dados_censurados.csv)  
   -l, --level       Nível de censura dos dados.  
@@ -192,11 +249,13 @@ Se o arquivo original não seguir esse padrão, será necessário renomeá-lo.
 
 ## Tecnologias  
 
-- Python 3.8+
-- pandas (processamento de DataFrames)
-- re (expressões regulares, biblioteca padrão)
-- pytest (testes)
-- uv (gerenciamento de dependências)  
+- Python *3.8+*
+- pandas *>=1.3.0*
+- re
+- PyMuPDF *>=1.24.11*
+- PDFPlumber *>=0.11.5*
+- pytest
+- uv *(gerenciamento de dependências)*  
 
 ## Autor
 ***Yuri Pontes***  
