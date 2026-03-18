@@ -73,7 +73,7 @@ class PDFDetector:
                     continue
 
                 # Construir texto a partir dos caracteres com quebras de linha
-                page_text = self._extract_text_with_newlines(chars)
+                page_text, _ = self._extract_text_with_mapping(chars)
 
                 detections = self._detect_in_text(page_text)
 
