@@ -155,34 +155,14 @@ anonymizer = Anonymizer(level='default')
 
 Censura dados sensíveis em arquivos CSV e PDF sem quebrar a estrutura do arquivo, com três níveis de formatação: **default, high, low**. Exemplos de dados alvos da ferramenta atualmente e extensões disponíveis, mascaradas em formato **DEFAULT**:
 
-<table style="margin-left: auto; margin-right: auto; text-align: center; border-collapse: collapse;">
-  <caption><strong>DADOS E EXTENSÕES DISPONÍVEIS</strong></caption>
-  <thead>
-    <tr>
-      <th style="border: 1px solid #ccc; padding: 10px;"></th>
-      <th style="border: 1px solid #ccc; padding: 10px;">CPF</th>
-      <th style="border: 1px solid #ccc; padding: 10px;">E-Mail</th>
-      <th style="border: 1px solid #ccc; padding: 10px;">Telefone</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="border: 1px solid #ccc; padding: 10px;"><strong>CSV</strong></td>
-      <td style="border: 1px solid #ccc; padding: 10px;">✔️</td>
-      <td style="border: 1px solid #ccc; padding: 10px;">✔️</td>
-      <td style="border: 1px solid #ccc; padding: 10px;">✔️</td>
-    </tr>
-    <tr>
-      <td style="border: 1px solid #ccc; padding: 10px;"><strong>PDF</strong></td>
-      <td style="border: 1px solid #ccc; padding: 10px;">✔️</td>
-      <td style="border: 1px solid #ccc; padding: 10px;">✔️</td>
-      <td style="border: 1px solid #ccc; padding: 10px;">✔️</td>
-    </tr>
-  </tbody>
-</table>
+| Extensão | CPF | E-Mail | Telefone | Nome | CEP | Rua | Cidade | Estado | UF | Endereço completo |
+|:----------:|:-----:|:--------:|:---------:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| **CSV** | ✔ | ✔ | ✔ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ |
+| **PDF** | ✔ | ✔ | ✔ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ |
+
 
 ### Exemplo de mascaramento padrão:
-| Expensão | CPF | E-Mail |Telefone |
+| Extensão | CPF | E-Mail |Telefone |
 |----------|---------|--------|-|
 | **CSV** | XXX.096.XXX-XX | bxxxxxxxxx@empresa.com |(21) XXXXX-4321|
 | **PDF** | ███.096.███-██ | b█████████@empresa.com |(21) █████-4321|
