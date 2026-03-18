@@ -136,64 +136,47 @@ class PDFDetector:
 
     # Função mascaramento
     def mask(self, pdf_path: str, output_path: str) -> dict:
-        """
-        Lê um PDF, detecta dados sensíveis, aplica máscaras de redação e salva o resultado no diretório de destino.
-        Retorna resumo do que foi mascarado.
-        """
         doc = fitz.open(pdf_path)
         summary = {'cpf': 0, 'email': 0, 'phone': 0, 'pages_processed': 0}
 
         for page_num in range(len(doc)):
             page = doc[page_num]
-            text_dict = page.get_text("dict")
+            page_text = page.get_text()
             page_had_redactions = False
-
-            for block in text_dict["blocks"]:
-                if block["type"] != 0:
+    
+            # Detecta todos os padrões no texto da página
+            detections = self._detect_in_text(page_text)
+    
+            for data_type, matched_text, start, end in detections:
+                # Busca a posição exata do texto na página
+                rects = page.search_for(matched_text)
+    
+                if not rects:
                     continue
-
-                for line in block["lines"]:
-                    for span in line["spans"]:
-                        span_text = span["text"]
-                        span_rect = fitz.Rect(span["bbox"])
-                        span_font = span["font"]
-                        span_size = span["size"]
-
-                        detections = self._detect_in_text(span_text)
-
-                        if not detections:
-                            continue
-
-                        # Constrói a versão mascarada do texto completo
-                        masked_text = self._build_masked_text(
-                            span_text, detections
-                        )
-
-                        # Adiciona anotação de redação: cobre o texto original
-                        page.add_redact_annot(
-                            span_rect,
-                            text=masked_text,
-                            fontname="helv",
-                            fontsize=span_size * 0.95,
-                            align=fitz.TEXT_ALIGN_LEFT,
-                            fill=(1, 1, 1), # Fundo branco
-                            text_color=(0, 0, 0), # Texto preto
-                        )
-
-                        page_had_redactions = True
-
-                        # Atualiza resumo
-                        for data_type, _, _, _ in detections:
-                            summary[data_type] += 1
-
-            # Aplica todas as redações na página
+                
+                # Mascara o valor
+                masked = self._mask_value(data_type, matched_text)
+    
+                for rect in rects:
+                    page.add_redact_annot(
+                        rect,
+                        text=masked,
+                        fontname="helv",
+                        fontsize=0,  # 0 = ajusta automaticamente ao retângulo
+                        align=fitz.TEXT_ALIGN_LEFT,
+                        fill=(1, 1, 1),
+                        text_color=(0, 0, 0),
+                    )
+    
+                page_had_redactions = True
+                summary[data_type] += 1
+    
             if page_had_redactions:
                 page.apply_redactions()
                 summary['pages_processed'] += 1
-
+    
         doc.save(output_path)
         doc.close()
-
         return summary
 
     def _build_masked_text(self, span_text: str, detections: list) -> str:
@@ -240,7 +223,7 @@ class PDFDetector:
 
         else:
             # Padrão: revela o meio, posições 3-5
-            masked = '█' * 3 + digits[3:6] + '█' * 5
+            masked = '⏹' * 3 + digits[3:6] + '█' * 5
 
         if is_formatted:
             return f"{masked[:3]}.{masked[3:6]}.{masked[6:9]}-{masked[9:11]}"
