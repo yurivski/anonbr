@@ -103,7 +103,7 @@ class PDFDetector:
         """
         summary = {'cpf': 0, 'email': 0, 'phone': 0, 'pages_processed': 0}
 
-        # pdfplumber — detectar caracteres e construir mapa de mascaramento
+        # pdfplumber detecta caracteres e constrói mapa de mascaramento
         mask_map = self._build_mask_map(pdf_path, summary)
 
         if not mask_map:
@@ -112,12 +112,27 @@ class PDFDetector:
             doc.close()
             return summary
 
-        # pymupdf — desenhar barras pretas sobre os caracteres mascarados
+        # pymupdf desenha barras pretas sobre os caracteres mascarados
         doc = fitz.open(pdf_path)
 
         for page_num, bars in mask_map.items():
             page = doc[page_num]
 
+            # Apaga o texto original permanentemente
+            for bar in bars:
+                rect = fitz.Rect(bar['x0'], bar['top'], bar['x1'], bar['bottom'])
+                page.add_redact_annot(
+                    rect,
+                    text='X',
+                    fontname="helv",
+                    fontsize=1,
+                    fill=(1, 1, 1),
+                    text_color=(1, 1, 1),  # Texto branco (invisível)
+                )
+
+            page.apply_redactions()
+
+            # Desenha tarjas pretas por cima
             for bar in bars:
                 rect = fitz.Rect(bar['x0'], bar['top'], bar['x1'], bar['bottom'])
                 page.draw_rect(rect, color=(0, 0, 0), fill=(0, 0, 0))
