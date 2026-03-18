@@ -37,6 +37,27 @@ class PDFDetector:
             'phone_digits': self.detect_phone.regexes[2],
         }
 
+    def _extract_text_with_mapping(self, chars):
+        """Reconstrói texto com quebras de linha e mapeia índice do texto pro índice do chars."""
+        if not chars:
+            return '', {}
+        
+        text = ''
+        text_to_char = {}  # {índice_no_texto: índice_no_chars}
+        char_idx = 0
+        last_top = chars[0]['top']
+        
+        for c in chars:
+            if abs(c['top'] - last_top) > 2:
+                text += '\n'
+                # \n não mapeia pra nenhum char
+                last_top = c['top']
+            text_to_char[len(text)] = char_idx
+            text += c['text']
+            char_idx += 1
+        
+        return text, text_to_char
+
     # Detecção
     def detect(self, pdf_path: str) -> dict:
         """
@@ -51,7 +72,9 @@ class PDFDetector:
                 if not chars:
                     continue
 
-                page_text = ''.join(c['text'] for c in chars)
+                # Construir texto a partir dos caracteres com quebras de linha
+                page_text = self._extract_text_with_newlines(chars)
+
                 detections = self._detect_in_text(page_text)
 
                 if detections:
@@ -72,10 +95,10 @@ class PDFDetector:
 
         pattern_order = [
             ('cpf', 'cpf_formatted'),
+            ('cpf', 'cpf_unformatted'),
             ('email', 'email'),
             ('phone', 'phone_international'),
             ('phone', 'phone_ddd'),
-            ('cpf', 'cpf_unformatted'),
             ('phone', 'phone_digits'),
         ]
 
@@ -157,8 +180,8 @@ class PDFDetector:
                 if not chars:
                     continue
 
-                # Construir texto a partir dos caracteres
-                page_text = ''.join(c['text'] for c in chars)
+                # Construir texto a partir dos caracteres com quebras de linha
+                page_text, text_to_char = self._extract_text_with_mapping(chars)
 
                 # Detectar padrões
                 detections = self._detect_in_text(page_text)
@@ -170,15 +193,17 @@ class PDFDetector:
 
                 # Construir posições das barras a partir das bounding boxes dos caracteres
                 page_bars = []
-                for char_idx in sorted(chars_to_mask.keys()):
-                    if char_idx < len(chars):
-                        c = chars[char_idx]
-                        page_bars.append({
-                            'x0': c['x0'],
-                            'top': c['top'],
-                            'x1': c['x1'],
-                            'bottom': c['bottom'],
-                        })
+                for text_idx in sorted(chars_to_mask.keys()):
+                    if text_idx in text_to_char:
+                        char_idx = text_to_char[text_idx]
+                        if char_idx < len(chars):
+                            c = chars[char_idx]
+                            page_bars.append({
+                                'x0': c['x0'],
+                                'top': c['top'],
+                                'x1': c['x1'],
+                                'bottom': c['bottom'],
+                            })
 
                 if page_bars:
                     mask_map[page_num] = page_bars
