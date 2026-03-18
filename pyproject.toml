@@ -1,6 +1,6 @@
 [project]
 name = "anonbr"
-version = "1.0"
+version = "1.5.0"
 description = "Ferramenta para ocultar dados pessoais em DataFrames."
 readme = "README.md"
 requires-python = ">=3.8"
