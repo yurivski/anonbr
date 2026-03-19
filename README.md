@@ -22,9 +22,9 @@ O projeto foi desenvolvido para estimular programadores de Júniors a Sêniors n
 
 ## Atualizações
 
-**v1.0.0 -** Censura CPF, E-Mail e Telefone apenas em arquivos CSV.
+*15/03/2026* - **v1.0.0 -** Censura CPF, E-Mail e Telefone apenas em arquivos CSV.
 
-**v1.5.0 -** ***Nova funcionalidade:*** Censura de dados em **PDF** sem quebrar o formato do arquivo.
+*18/03/2026* - **v1.1.0 -** ***Nova funcionalidade:*** Censura de dados em **PDF** sem quebrar o formato do arquivo.
 
 [**CLIQUE AQUI - RESUMO DAS FUNCIONALIDADES E EXEMPLO DE MASCARAMENTO.**](#funcionalidades---resumo)
 
