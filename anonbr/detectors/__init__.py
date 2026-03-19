@@ -1,3 +1,6 @@
+# Copyright (C) 2026 Yuri Pontes
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 """
 Detectores de dados pessoais sensíveis.
 

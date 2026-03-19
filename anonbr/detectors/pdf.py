@@ -1,3 +1,6 @@
+# Copyright (C) 2026 Yuri Pontes
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 """
 Detecta e mascara dados sensíveis (CPF, email, telefone) em arquivos PDF.
 """

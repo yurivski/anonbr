@@ -1,3 +1,6 @@
+# Copyright (C) 2026 Yuri Pontes
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 """
 Classe principal de anonimização.
 Integra todos os detectores para facilitar uso em DataFrames.

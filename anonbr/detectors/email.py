@@ -1,3 +1,6 @@
+# Copyright (C) 2026 Yuri Pontes
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 """
 Detector e anonimizador de email.
 Detecta endereços de email e mascara preservando informações de domínio

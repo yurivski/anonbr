@@ -1,3 +1,6 @@
+# Copyright (C) 2026 Yuri Pontes
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 """
 Detecta números de CPF em múltiplos formatos e fornece funcionalidade de mascaramento
 preservando a estrutura do documento.
