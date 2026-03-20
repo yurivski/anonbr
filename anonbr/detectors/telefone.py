@@ -44,6 +44,23 @@ class PhoneDetector:
                 phone = match.group()
                 results.append((phone, start, end, pattern_index))
                 found_positions.add((start, end))
+
+        phone_patterns = self.regexes
+        parts = text.split('/')
+        offset = 0
+        
+        for part in parts:
+            for regex in phone_patterns:
+                for match in regex.finditer(part):
+                    original_start = offset + match.start()
+                    original_end = offset + match.end()
+                    if any(s <= original_start < e or s < original_end <= e for s, e in found_positions):
+                        continue
+                    results.append((match.group(), original_start, original_end, 0))
+                    found_positions.add((original_start, original_end))
+            
+            offset += len(part) + 1
+
         return results
 
     def _validate(self, phone: str) -> bool:

@@ -96,7 +96,28 @@ class TestPhoneDetector:
         assert "(21)" in masked
         assert "4321" in masked
 
+    def test_detect_phone_separated_by_slash(self):
+        text = "Telefones: 21987654321/21876543210"
+        results = self.detector.detect(text)
+        assert len(results) == 2
+
+    def test_detect_phone_formatted_separated_by_slash(self):
+        text = "Fone: (21) 98765-4321/(21) 87654-3210"
+        results = self.detector.detect(text)
+        assert len(results) == 2
+
+    def test_detect_phone_with_slash_and_spaces(self):
+        text = "Tel: 21987654321 / 21876543210"
+        results = self.detector.detect(text)
+        assert len(results) == 2
+
 class TestPhoneHelpers:
+    def test_helper_detect_phone_separated_by_slash(self):
+        text = "Fones: 21987654321/21876543210"
+        results = detect_phone(text)
+        
+        assert len(results) == 2
+
     def test_helper_detect_phone(self):
         text = "Telefone: (21) 98765-4321"
         results = detect_phone(text)
