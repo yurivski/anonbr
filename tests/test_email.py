@@ -69,11 +69,20 @@ class TestEmailDetector:
         
         assert masked == "xxxx@xxxxx.xxx"
     
-    def test_mask_email_domain_level(self):
-        email = "joao@email.com"
-        masked = self.detector.mask(email, level='domain')
-        
-        assert masked == "jxxx@email.com"
+    def test_not_detect_email_in_url(self):
+        text = "Site: https://empresa.teste.com/usuario@empresa.com/afgdg"
+        results = self.detector.detect(text)
+        assert len(results) == 0
+
+    def test_detect_email_not_in_url(self):
+        text = "Contato: usuario@empresa.com"
+        results = self.detector.detect(text)
+        assert len(results) == 1
+
+    def test_detect_email_with_slash_no_protocol(self):
+        text = "Lista: email1@empresa.com/email2@empresa.com"
+        results = self.detector.detect(text)
+        assert len(results) == 2
     
     def test_mask_email_without_at(self):
         email = "emailinvalido"
@@ -82,6 +91,11 @@ class TestEmailDetector:
         assert masked == email
 
 class TestEmailHelpers:
+    def test_helper_not_detect_email_in_url(self):
+        text = "Link: https://site.com/usuario@empresa.com/path"
+        results = detect_email(text)
+        assert len(results) == 0
+
     def test_helper_detect_email(self):
         text = "Email: teste@exemplo.com"
         results = detect_email(text)

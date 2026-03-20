@@ -29,7 +29,7 @@ class EmailDetector:
                 block_start -= 1
             block_end = match.end()
             while block_end < len(text) and text[block_end] not in (' ', '\n', '\t'):
-                block_end -= 1
+                block_end += 1
             block = text[block_start:block_end]
             if '://' in block:
                 continue
