@@ -13,7 +13,7 @@ class CPFDetector:
     # Detecta e mascara números de CPF nos padrões: 123.456.789-09 ou 12345678909
 
     formatted_pattern = r'\b\d{3}\.\d{3}\.\d{3}-\d{2}\b'
-    unformatted_pattern = r'\b\d{11}\b'
+    unformatted_pattern = r'(?<!\d)\d{11}(?!\d)'
 
     def __init__(self):
         self.formatted_regex = re.compile(self.formatted_pattern)

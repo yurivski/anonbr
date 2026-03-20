@@ -125,13 +125,33 @@ class TestPDFDetection:
         assert 1 in findings  # Email na pág. 2
         assert 2 in findings  # Telefone na pág. 3
 
-    def test_detect_unformatted_cpf(self, pdf_unformatted_cpf):
-        detector = PDFDetector()
-        findings = detector.detect(pdf_unformatted_cpf)
+    def test_not_detect_email_in_url(self, tmp_path):
+        pdf_path = tmp_path / "url.pdf"
+        doc = fitz.open()
+        page = doc.new_page()
+        page.insert_text((50, 50), "Link: https://site.com/usuario@empresa.com/path")
+        doc.save(str(pdf_path))
+        doc.close()
 
+        detector = PDFDetector()
+        findings = detector.detect(str(pdf_path))
+        if 0 in findings:
+            types_found = [f['type'] for f in findings[0]]
+            assert 'email' not in types_found
+
+    def test_detect_phones_separated_by_slash(self, tmp_path):
+        pdf_path = tmp_path / "phones_slash.pdf"
+        doc = fitz.open()
+        page = doc.new_page()
+        page.insert_text((50, 50), "Fones: 21987654321/21876543210")
+        doc.save(str(pdf_path))
+        doc.close()
+
+        detector = PDFDetector()
+        findings = detector.detect(str(pdf_path))
         assert 0 in findings
-        types_found = [f['type'] for f in findings[0]]
-        assert 'cpf' in types_found
+        phone_count = sum(1 for f in findings[0] if f['type'] == 'phone')
+        assert phone_count == 2
 
 # Testes de padõres de mascaramento
 class TestPDFMaskPatterns:

@@ -132,6 +132,31 @@ class PDFDetector:
                 for pos in range(start, end):
                     used_positions.add(pos)
 
+            phone_patterns = [
+                self.patterns['phone_international'],
+                self.patterns['phone_ddd'],
+                self.patterns['phone_digits'],
+            ]
+
+            parts = text.split('/')
+            offset = 0
+
+            for part in parts:
+                for regex in phone_patterns:
+                    for match in regex.finditer(part):
+                        original_start = offset + match.start()
+                        original_end = offset + match.end()
+
+                        if any(pos in used_positions for pos in range(original_start, original_end)):
+                            continue
+
+                        detections.append(('phone', match.group(), original_start, original_end))
+
+                        for pos in range(original_start, original_end):
+                            used_positions.add(pos)
+                
+                offset += len(part) + 1
+
         return detections
 
     # Mascaramento
