@@ -114,6 +114,19 @@ class PDFDetector:
                 if any(pos in used_positions for pos in range(start, end)):
                     continue
 
+                # Restrição de URL pra emails
+                if data_type == 'email':
+                    block_start = start
+                    while block_start > 0 and text[block_start - 1] not in (' ', '\n', '\t'):
+                        block_start -= 1
+                    block_end = end
+                    while block_end < len(text) and text[block_end] not in (' ', '\n', '\t'):
+                        block_end += 1
+                    block = text[block_start:block_end]
+                    if '://' in block:
+                        continue
+                
+                matched_text = match.group()
                 detections.append((data_type, match.group(), start, end))
 
                 for pos in range(start, end):
