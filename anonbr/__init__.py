@@ -17,7 +17,7 @@
 Biblioteca Python para detectar e anonimizar os dados sensíveis (CPF, email, telefone).
 """
 
-__version__ = '1.1.1'
+__version__ = '1.1.2'
 __author__ = 'Yuri Pontes'
 __license__ = 'AGPL-3.0'
 
