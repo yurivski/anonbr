@@ -11,15 +11,13 @@ from typing import Optional
 
 class PhoneDetector:
     # Detecta e mascara os números de telefone
-
-    """
-    Exemplo de padrões de números: 
-    (21) 98765-4321, (21) 3456-7890, 21987654321, +55 21 98765-4321
-    """
+    """ Sistema de redundância pra detecção de padrões visuais, definidos por uma série de 
+        inconsistências em diferentes tipos de PDFs pra otimizar a identificação dos dados alvos."""
     patterns = [
-        r'\+55\s?\(?\d{2}\)?\s?\d{4,5}-?\d{4}',  # + 55 (21) 98765-4321
-        r'\(?\d{2}\)?\s?\d{4,5}-?\d{4}',  # (21) 3456-7890
-        r'\b\d{10,11}\b',  # 21987654321
+        r'\+55\s?\(?\d{2}\)?\s?\d{4,5}-?\d{4}', # +55 (21) 98765-4321
+        r'\(?\d{2}\)?\s?\d\s?\d{4}-?\d{4}', # (21) 9 8765-4321 (nono dígito separado)
+        r'\(?\d{2}\)?\s?\d{4,5}-?\d{4}', # (21) 8765-4321
+        r'\b\d{10,11}\b', # 21987654321
     ]
 
     def __init__(self):
