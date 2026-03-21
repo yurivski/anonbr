@@ -20,14 +20,13 @@ O projeto foi desenvolvido para estimular programadores de Júniors a Sêniors n
 
 ***Todos os dados sensíveis expostos neste repositório são fictícios, gerados por IA como ilustração para exibição de testes.***
 
-### CLIQUE AQUI   
+### CLIQUE AQUI
+- [**EXEMPLOS DE OUTPUTS EM CADA NÍVEL DE CENSURA**](/OUTPUT_EXEMPLE.md)   
 - [**HISTÓRICO DE ATUALIZAÇÕES E VERSÕES**](/UPDATES.md)
-- [**RESUMO DAS FUNCIONALIDADES E EXEMPLO DE MASCARAMENTO.**](#funcionalidades---resumo)
 
 
-## SUMÁRIO
-
-[**#1** - NÍVEIS DE MASCARAMENTO](#níveis-de-mascaramento)  
+## SUMÁRIO  
+[**#1** - RESUMO DAS FUNCIONALIDADES E EXEMPLO DE MASCARAMENTO](#funcionalidades---resumo)  
 [**#2** - ARQUITETURA DO PROJETO](#arquitetura-do-projeto)  
 [**#3** - COMO FUNCIONA A DETECÇÃO](#como-funciona-a-detecção)  
 [**#4** - COMO FUNCIONA O MASCARAMENTO](#como-funciona-o-mascaramento)  
@@ -38,53 +37,33 @@ O projeto foi desenvolvido para estimular programadores de Júniors a Sêniors n
 [**#9** - TECNOLOGIAS](#tecnologias)  
 [**#10** - AUTOR](#autor)  
 
-## Níveis de Mascaramento
 
-| Dado| High | Default | Low | 
-|-----|------|--------|-------|
-| **CPF**| XXX.XXX.XXX-XX | XXX.567.XXX-XX | XXX.XX9.567-01 |
-| **Telefone** | +XX (XX) XXXXX-XXXX | +55 (21) XXXXX-5678 | +55 (21) XXXX2-3456 |
-| **E-Mail** | xxxxxxxxx@xxxxx.xxx | bxxxxxxx@gmail.com | xxxxosilva@gmail.com |
+## Funcionalidades - RESUMO
 
-A biblioteca oferece três níveis de privacidade. Cada nível controla quanta informação fica visível após o mascaramento.
+Censura dados sensíveis em arquivos CSV e PDF sem quebrar a estrutura do arquivo, com três níveis de formatação: **default, high, low**. Exemplos de dados alvos da ferramenta atualmente e extensões disponíveis, mascaradas em formato **DEFAULT**:
 
-### Level high (mascara tudo)
+| Extensão | CPF | E-Mail | Telefone | Nome | CEP | Rua | Cidade | Estado | UF | Endereço completo |
+|:----------:|:-----:|:--------:|:---------:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| **CSV** | ✔ | ✔ | ✔ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ |
+| **PDF** | ✔ | ✔ | ✔ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ |
 
-Oculta toda a informação. Útil quando nenhum dado pode ser revelado.
 
-| Tipo     | Entrada                         | Saída                            |
-|----------|---------------------------------|----------------------------------|
-| CPF      | 375.096.646-08                  | XXX.XXX.XXX-XX                   |
-| Email    | bruno.silva@empresa.com.br       | xxxxxxxxxx@xxxxxxx.xxx.xx        |
-| Telefone | (21) 98765-4321                 | (XX) XXXXX-XXXX                  |
+### Exemplo de mascaramento padrão:
+| Extensão | CPF | E-Mail |Telefone |
+|----------|---------|--------|-|
+| **CSV** | XXX.096.XXX-XX | bxxxxxxxxx@empresa.com |(21) XXXXX-4321|
+| **PDF** | ███.096.███-██ | b█████████@empresa.com |(21) █████-4321|
 
-### Level default (equilíbrio)
-
-Revela uma parte pequena para conferência, sem expor o dado completo.
-
-| Tipo     | Entrada                         | Saída                            |
-|----------|---------------------------------|----------------------------------|
-| CPF      | 375.096.646-08                  | XXX.096.XXX-XX                   |
-| Email    | bruno.silva@empresa.com.br       | bxxxxxxxxx@empresa.com.br        |
-| Telefone | (21) 98765-4321                 | (21) XXXXX-4321                  |
-
-### Level low (revela mais)
-
-Revela mais informação. Útil para conferência em ambientes controlados.
-
-| Tipo     | Entrada                         | Saída                            |
-|----------|---------------------------------|----------------------------------|
-| CPF      | 375.096.646-08                  | XXX.XX6.646-08                   |
-| Email    | bruno.silva@empresa.com.br       | xxxxosilva@empresa.com.br        |
-| Telefone | (21) 98765-4321                 | (21) XXXX5-4321                  |
 
 ## Arquitetura do projeto  
 
 ![Arquitetura do projeto](images/arquitetura_docs.png)
 
+
 ## Como funciona a detecção
 
 A detecção é baseada em padrões visuais (regex), sem validação matemática. Isso garante que qualquer dado que pareça um CPF, email ou telefone será detectado e mascarado.
+
 
 ### CPF
 
@@ -97,7 +76,6 @@ O detector busca dois formatos: formatado (com pontos e hífen) e apenas número
 
 Quando o texto tem um CPF formatado como `375.096.646-08`, os dois padrões poderiam encontrar o mesmo número (um com pontuação, outro só os dígitos). Para evitar duplicatas, o método `_sobrepoe_formatado` verifica se as posições do match já foram cobertas por um CPF formatado encontrado antes.
 
----
 
 ### Email
 
@@ -113,7 +91,6 @@ usuario123@servidor.net
 
 O regex exige: pelo menos um caractere antes do `@`, pelo menos um ponto no domínio, e pelo menos duas letras na extensão (`.com`, `.br`, `.net`). Textos sem `@` são ignorados, pois não representam emails.
 
----
 
 ### Telefone
 
@@ -128,6 +105,7 @@ O detector cobre os formatos brasileiros mais comuns, do mais específico para o
 
 A ordem importa: o padrão internacional é testado primeiro. Se um número já foi encontrado por um padrão mais específico, os padrões seguintes ignoram aquela posição no texto. Isso evita que `+55 (21) 98765-4321`
 seja detectado duas vezes (uma pelo padrão internacional e outra pelo padrão com DDD).
+
 
 ## Como funciona o mascaramento
 
@@ -148,28 +126,13 @@ anonymizer = Anonymizer(level='default')
 
 ![Nível de mascaramento](images/nivel_mascaramento.png)  
 
-## Funcionalidades - RESUMO
-
-Censura dados sensíveis em arquivos CSV e PDF sem quebrar a estrutura do arquivo, com três níveis de formatação: **default, high, low**. Exemplos de dados alvos da ferramenta atualmente e extensões disponíveis, mascaradas em formato **DEFAULT**:
-
-| Extensão | CPF | E-Mail | Telefone | Nome | CEP | Rua | Cidade | Estado | UF | Endereço completo |
-|:----------:|:-----:|:--------:|:---------:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-| **CSV** | ✔ | ✔ | ✔ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ |
-| **PDF** | ✔ | ✔ | ✔ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ |
-
-
-### Exemplo de mascaramento padrão:
-| Extensão | CPF | E-Mail |Telefone |
-|----------|---------|--------|-|
-| **CSV** | XXX.096.XXX-XX | bxxxxxxxxx@empresa.com |(21) XXXXX-4321|
-| **PDF** | ███.096.███-██ | b█████████@empresa.com |(21) █████-4321|
-
 
 ## Caso de Uso
 
 Você é DBA ou quem quer que seja e recebe pedidos constantes de acesso ao banco para desenvolvimento ou teste. Não pode autorizar acesso direto (dados sensíveis em produção), mas a equipe precisa dos dados numa quantidade real para desenvolver ou testar alguma funcionalidade de algo projeto ou ferramenta.
 
 Fazer exports manuais e editar cada campo sensível em Excel consome horas e é propenso a erros. O Anonbr automatiza esse processo: você exporta o arquivo para a [**extenção disponível**](#funcionalidades---resumo), executa a ferramenta (CPF: de 123.456.789-09 para XXX.XXX.789-XX, Email: de bruno@email.com para bxxx@email.com, **para PDFs usa tarjas pretas**) e compartilha o arquivo com segurança. A equipe trabalha com dados reais sem expor informações pessoais.
+
 
 ## Configuração do ambiente
 
@@ -192,6 +155,7 @@ Para realizar a anonimização existe apenas um comando mínimo e obrigatório: 
 **Comando básico:**
 > Comando completo: `uv run main.py -i documentos/arquivo.csv`  
 *Output padrão: anonbr/dados_censurados.csv*. 
+
 
 ### Lista de comandos:
 
@@ -224,6 +188,7 @@ Observe que não foi definido o separador `-s`, normalmente as planilas CSVs sã
 ***Exemplo:*** relatorio_2025.pdf
 Se o arquivo original não seguir esse padrão, será necessário renomeá-lo.
 
+
 ## Tecnologias  
 
 - Python *3.8+*
@@ -233,6 +198,7 @@ Se o arquivo original não seguir esse padrão, será necessário renomeá-lo.
 - PDFPlumber *>=0.11.5*
 - pytest
 - uv *(gerenciamento de dependências)*  
+
 
 ## Autor
 ***Yuri Pontes***  
