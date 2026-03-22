@@ -20,4 +20,5 @@ A biblioteca oferece três níveis de privacidade. Cada nível controla quanta i
 
 ---
 
+![Exemplo de output](/images/exemplo_output.png)
 

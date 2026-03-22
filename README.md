@@ -178,7 +178,7 @@ A lista de comandos irá aparecer no terminal caso execute o arquivo sem nenhum 
 
 **Imagem do output:** 
 
-![Exemplo output](images/exemplo_output.png)
+![Exemplo output](images/exemplo_output_csv.png)
 
 **Explicação:** O usuário inseriu o local e o nome da planilha de origem `documentos/Relatório_de_Atendimento_de_RH_Saúde.csv`, definiu o local e o nome da planilha de destino `documentos/relatorio_de_atendimento_de_rh_saude.csv`, definiu o nível de sencura `-l high` (alto), e escolheu exibir detalhes dos dados detectados no terminal `-r`. O diretório de destino será criado caso não exista.
 
