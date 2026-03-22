@@ -109,9 +109,47 @@ class TestPhoneDetector:
     def test_detect_phone_with_slash_and_spaces(self):
         text = "Tel: 21987654321 / 21876543210"
         results = self.detector.detect(text)
+
         assert len(results) == 2
 
+    def test_detect_phone_separated_by_pipe(self):
+        text = "Telefones: 21987654321|21876543210"
+        results = self.detector.detect(text)
+
+        assert len(results) == 2
+
+    def test_detect_phone_separated_by_pipe_and_spaces(self):
+        text = "Telefones: 21987654321 | 21876543210"
+        results = self.detector.detect(text)
+
+        assert len(results) == 2
+
+    def test_detect_ninth_digit_separated(self):
+        text = "Celular: (21) 9 9876-5432"
+        results = self.detector.detect(text)
+
+        assert len(results) == 1
+        assert results[0][0] == "(21) 9 9876-5432"
+
 class TestPhoneHelpers:
+
+    def test_helper_detect_phone_separated_by_pipe(self):
+        text = "Fones: 21987654321|21876543210"
+        results = detect_phone(text)
+        assert len(results) == 2
+
+    def test_detect_phone_separated_by_pipe_and_spaces(self):
+        text = "Telefones: 21987654321 | 21876543210"
+        results = detect_phone(text)
+        
+        assert len(results) == 2
+
+    def test_helper_detect_ninth_digit_separated(self):
+        text = "Cel: (21) 9 9876-5432"
+        results = detect_phone(text)
+        
+        assert len(results) == 1
+
     def test_helper_detect_phone_separated_by_slash(self):
         text = "Fones: 21987654321/21876543210"
         results = detect_phone(text)
