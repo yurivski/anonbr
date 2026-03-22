@@ -57,13 +57,13 @@ RESET = '\033[0m'
     e BR em verde. Se remover o RESET vai colorir todo o texto de saída no terminal."""
 
 # Pois é, parece uma gambiarra do krl, mas tá bonito no terminal. 
-logo = f'''{BOLD}{WHITE}
+logo = f'''\n{BOLD}{WHITE}
  █████╗ ███╗   ██╗ ██████╗ ███╗   ██╗      {GREEN}██████╗ ██████╗ {WHITE}
 ██╔══██╗████╗  ██║██╔═══██╗████╗  ██║      {GREEN}██╔══██╗██╔══██╗{WHITE}
 ███████║██╔██╗ ██║██║   ██║██╔██╗ ██║█████╗{GREEN}██████╔╝██████╔╝{WHITE}
 ██╔══██║██║╚██╗██║██║   ██║██║╚██╗██║╚════╝{GREEN}██╔══██╗██╔══██╗{WHITE}
 ██║  ██║██║ ╚████║╚██████╔╝██║ ╚████║      {GREEN}██████╔╝██║  ██║{WHITE}
-╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═══╝      {GREEN}╚═════╝ ╚═╝  ╚═╝{RESET}'''
+╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═══╝      {GREEN}╚═════╝ ╚═╝  ╚═╝{RESET}\n'''
 
 spacebar = " " * 20
 def create_parser():
@@ -132,10 +132,10 @@ def main():
             detector = PDFDetector(level=args.level)
             output = args.output if args.output != 'dados_censurados.csv' else 'censurado.pdf'
             summary = detector.mask(args.input, output)
-            print(f"\nRedação concluída.")
+            print(f"\nOperação concluída.")
             print(f"CPFs: {summary['cpf']}, Emails: {summary['email']}, Telefones: {summary['phone']}")
             print(f"Páginas processadas: {summary['pages_processed']}")
-            print(f"Arquivo salvo: {output}")
+            print(f"Arquivo salvo: {output}\n")
             return 0
 
         df = load_data(args.input, args.sep)
