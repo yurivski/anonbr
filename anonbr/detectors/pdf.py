@@ -7,9 +7,10 @@ Detecta e mascara dados sensíveis (CPF, email, telefone) em arquivos PDF.
 
 import re
 import os
-import fitz  # pymupdf
+import fitz
 import pdfplumber
 
+from tqdm import tqdm
 from anonbr.detectors.cpf import CPFDetector
 from anonbr.detectors.email import EmailDetector
 from anonbr.detectors.telefone import PhoneDetector
@@ -113,22 +114,8 @@ class PDFDetector:
 
                 if any(pos in used_positions for pos in range(start, end)):
                     continue
-
-                # Restrição de URL pra emails
-                if data_type == 'email':
-                    block_start = start
-                    while block_start > 0 and text[block_start - 1] not in (' ', '\n', '\t'):
-                        block_start -= 1
-                    block_end = end
-                    while block_end < len(text) and text[block_end] not in (' ', '\n', '\t'):
-                        block_end += 1
-                    block = text[block_start:block_end]
-                    if '://' in block:
-                        continue
                 
-                matched_text = match.group()
                 detections.append((data_type, match.group(), start, end))
-
                 for pos in range(start, end):
                     used_positions.add(pos)
 
@@ -138,7 +125,7 @@ class PDFDetector:
                 self.patterns['phone_digits'],
             ]
 
-            parts = text.split('/')
+            parts = re.split(r'[/|]', text)
             offset = 0
 
             for part in parts:
@@ -151,7 +138,6 @@ class PDFDetector:
                             continue
 
                         detections.append(('phone', match.group(), original_start, original_end))
-
                         for pos in range(original_start, original_end):
                             used_positions.add(pos)
                 
@@ -179,7 +165,7 @@ class PDFDetector:
         # pymupdf desenha barras pretas sobre os caracteres mascarados
         doc = fitz.open(pdf_path)
 
-        for page_num, bars in mask_map.items():
+        for page_num, bars in tqdm(mask_map.items(), desc="Censurando", unit="pág"):
             page = doc[page_num]
 
             # Apaga o texto original permanentemente
@@ -216,7 +202,7 @@ class PDFDetector:
         mask_map = {}
 
         with pdfplumber.open(pdf_path) as pdf:
-            for page_num, page in enumerate(pdf.pages):
+            for page_num, page in tqdm(enumerate(pdf.pages), total=len(pdf.pages), desc="Detectando", unit="pág"):
                 chars = page.chars
                 if not chars:
                     continue
