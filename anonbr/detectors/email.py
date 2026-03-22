@@ -22,18 +22,6 @@ class EmailDetector:
         results = []
         for match in self.regex.finditer(text):
             email = match.group()
-
-            # Verificar se o email está dentro de uma URL
-            block_start = match.start()
-            while block_start > 0 and text[block_start -1] not in (' ', '\n', '\t'):
-                block_start -= 1
-            block_end = match.end()
-            while block_end < len(text) and text[block_end] not in (' ', '\n', '\t'):
-                block_end += 1
-            block = text[block_start:block_end]
-            if '://' in block:
-                continue
-
             results.append((email, match.start(), match.end()))
         return results
 

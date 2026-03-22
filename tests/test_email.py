@@ -68,11 +68,6 @@ class TestEmailDetector:
         masked = self.detector.mask(email, level='high')
         
         assert masked == "xxxx@xxxxx.xxx"
-    
-    def test_not_detect_email_in_url(self):
-        text = "Site: https://empresa.teste.com/usuario@empresa.com/afgdg"
-        results = self.detector.detect(text)
-        assert len(results) == 0
 
     def test_detect_email_not_in_url(self):
         text = "Contato: usuario@empresa.com"
@@ -91,10 +86,6 @@ class TestEmailDetector:
         assert masked == email
 
 class TestEmailHelpers:
-    def test_helper_not_detect_email_in_url(self):
-        text = "Link: https://site.com/usuario@empresa.com/path"
-        results = detect_email(text)
-        assert len(results) == 0
 
     def test_helper_detect_email(self):
         text = "Email: teste@exemplo.com"
