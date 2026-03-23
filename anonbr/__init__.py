@@ -17,9 +17,16 @@
 Biblioteca Python para detectar e anonimizar os dados sensíveis (CPF, email, telefone).
 """
 
-__version__ = '1.1.3'
+__version__ = '1.2.0'
 __author__ = 'Yuri Pontes'
 __license__ = 'AGPL-3.0'
+
+from anonbr.detectors.cpf import CPFDetector, detect_cpf, mask_cpf
+from anonbr.detectors.cnpj import CNPJDetector, detect_cnpj, mask_cnpj
+from anonbr.detectors.email import EmailDetector, detect_email, mask_email
+from anonbr.detectors.telefone import PhoneDetector, detect_phone, mask_phone
+from anonbr.detectors.pdf import PDFDetector, detect_pdf, mask_pdf
+from anonbr.anonymizer import Anonymizer
 
 __all__ = [
     # Classe principal
@@ -27,6 +34,7 @@ __all__ = [
 
     # Classes detectores
     'CPFDetector',
+    'CNPJDetector',
     'EmailDetector',
     'PhoneDetector',
     'PDFDetector',
@@ -34,7 +42,11 @@ __all__ = [
     # Funções auxiliares - CPF
     'detect_cpf',
     'mask_cpf',
-    
+
+    # Funções auxiliares - CNPJ
+    'detect_cnpj',
+    'mask_cnpj',
+
     # Funções auxiliares - Email
     'detect_email',
     'mask_email',
