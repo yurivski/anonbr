@@ -42,10 +42,10 @@ O projeto foi desenvolvido para estimular programadores de Júniors a Sêniors n
 
 Censura dados sensíveis em arquivos CSV e PDF sem quebrar a estrutura do arquivo, com três níveis de formatação: **default, high, low**. Exemplos de dados alvos da ferramenta atualmente e extensões disponíveis, mascaradas em formato **DEFAULT**:
 
-| Extensão | CPF | E-Mail | Telefone | Nome | CEP | Rua | Cidade | Estado | UF | Endereço completo |
-|:----------:|:-----:|:--------:|:---------:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-| **CSV** | ✔ | ✔ | ✔ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ |
-| **PDF** | ✔ | ✔ | ✔ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ |
+| Extensão | CPF | E-Mail | Telefone | CNPJ | Nome | CEP | Rua | Cidade | Estado | UF | Endereço completo |
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| **CSV** | ✔ | ✔ | ✔ | ✔ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ |
+| **PDF** | ✔ | ✔ | ✔ | ✔ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ |
 
 
 ### Exemplo de mascaramento padrão:
