@@ -49,10 +49,10 @@ Censura dados sensíveis em arquivos CSV e PDF sem quebrar a estrutura do arquiv
 
 
 ### Exemplo de mascaramento padrão:
-| Extensão | CPF | E-Mail |Telefone |
-|----------|---------|--------|-|
-| **CSV** | XXX.096.XXX-XX | bxxxxxxxxx@empresa.com |(21) XXXXX-4321|
-| **PDF** | ███.096.███-██ | b█████████@empresa.com |(21) █████-4321|
+|Extensão|CPF|E-Mail|Telefone|CNPJ|
+|-|-|-|-|-|
+| **CSV** | XXX.096.XXX-XX | bxxxxxxxxx@empresa.com |(21) XXXXX-4321| XX.765.432/XXXX-XX
+| **PDF** | ███.096.███-██ | b█████████@empresa.com |(21) █████-4321| ██.765.432/████-██
 
 
 ## Arquitetura do projeto  
