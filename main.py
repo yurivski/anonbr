@@ -9,6 +9,7 @@ import pandas as pd
 import traceback
 import argparse
 import textwrap
+import warnings
 from anonbr.anonymizer import Anonymizer
 from anonbr.detectors.pdf import PDFDetector
 
@@ -133,7 +134,7 @@ def main():
             output = args.output if args.output != 'dados_censurados.csv' else 'censurado.pdf'
             summary = detector.mask(args.input, output)
             print(f"\nOperação concluída.")
-            print(f"CPFs: {summary['cpf']}, Emails: {summary['email']}, Telefones: {summary['phone']}")
+            print(f"CPFs: {summary['cpf']}, CNPJs: {summary['cnpj']}, Emails: {summary['email']}, Telefones: {summary['phone']}")
             print(f"Páginas processadas: {summary['pages_processed']}")
             print(f"Arquivo salvo: {output}\n")
             return 0

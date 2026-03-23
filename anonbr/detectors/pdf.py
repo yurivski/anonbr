@@ -12,9 +12,9 @@ import pdfplumber
 
 from tqdm import tqdm
 from anonbr.detectors.cpf import CPFDetector
+from anonbr.detectors.cnpj import CNPJDetector
 from anonbr.detectors.email import EmailDetector
 from anonbr.detectors.telefone import PhoneDetector
-
 
 class PDFDetector:
     """
@@ -26,6 +26,7 @@ class PDFDetector:
     def __init__(self, level='default'):
         self.level = level
         self.detect_cpf = CPFDetector()
+        self.detect_cnpj = CNPJDetector()
         self.detect_email = EmailDetector()
         self.detect_phone = PhoneDetector()
 
@@ -35,6 +36,8 @@ class PDFDetector:
         return {
             'cpf_formatted': self.detect_cpf.formatted_regex,
             'cpf_unformatted': self.detect_cpf.unformatted_regex,
+            'cnpj_formatted': self.detect_cnpj.formatted_regex,
+            'cnpj_unformatted': self.detect_cnpj.unformatted_regex,
             'email': self.detect_email.regex,
             'phone_international': self.detect_phone.regexes[0],
             'phone_ddd': self.detect_phone.regexes[1],
@@ -100,6 +103,8 @@ class PDFDetector:
         pattern_order = [
             ('cpf', 'cpf_formatted'),
             ('cpf', 'cpf_unformatted'),
+            ('cnpj', 'cnpj_formatted'),
+            ('cnpj', 'cnpj_unformatted'),
             ('email', 'email'),
             ('phone', 'phone_international'),
             ('phone', 'phone_ddd'),
@@ -114,34 +119,34 @@ class PDFDetector:
 
                 if any(pos in used_positions for pos in range(start, end)):
                     continue
-                
+
                 detections.append((data_type, match.group(), start, end))
                 for pos in range(start, end):
                     used_positions.add(pos)
 
-            phone_patterns = [
-                self.patterns['phone_international'],
-                self.patterns['phone_ddd'],
-                self.patterns['phone_digits'],
-            ]
+        phone_patterns = [
+            self.patterns['phone_international'],
+            self.patterns['phone_ddd'],
+            self.patterns['phone_digits'],
+        ]
 
-            parts = re.split(r'[/|]', text)
-            offset = 0
+        parts = text.split('/')
+        offset = 0
 
-            for part in parts:
-                for regex in phone_patterns:
-                    for match in regex.finditer(part):
-                        original_start = offset + match.start()
-                        original_end = offset + match.end()
+        for part in parts:
+            for regex in phone_patterns:
+                for match in regex.finditer(part):
+                    original_start = offset + match.start()
+                    original_end = offset + match.end()
 
-                        if any(pos in used_positions for pos in range(original_start, original_end)):
-                            continue
+                    if any(pos in used_positions for pos in range(original_start, original_end)):
+                        continue
 
-                        detections.append(('phone', match.group(), original_start, original_end))
-                        for pos in range(original_start, original_end):
-                            used_positions.add(pos)
-                
-                offset += len(part) + 1
+                    detections.append(('phone', match.group(), original_start, original_end))
+                    for pos in range(original_start, original_end):
+                        used_positions.add(pos)
+
+            offset += len(part) + 1
 
         return detections
 
@@ -151,7 +156,7 @@ class PDFDetector:
         Lê um PDF, detecta dados sensíveis, desenha barras pretas sobre os caracteres 
         que devem ser mascarados e salva o resultado.
         """
-        summary = {'cpf': 0, 'email': 0, 'phone': 0, 'pages_processed': 0}
+        summary = {'cpf': 0, 'cnpj': 0, 'email': 0, 'phone': 0, 'pages_processed': 0}
 
         # pdfplumber detecta caracteres e constrói mapa de mascaramento
         mask_map = self._build_mask_map(pdf_path, summary)
@@ -266,6 +271,8 @@ class PDFDetector:
         """
         if data_type == 'cpf':
             return self._cpf_mask_pattern(value)
+        elif data_type == 'cnpj':
+            return self._cnpj_mask_pattern(value)
         elif data_type == 'email':
             return self._email_mask_pattern(value)
         elif data_type == 'phone':
@@ -298,6 +305,32 @@ class PDFDetector:
                 else:
                     result += digit_pattern[digit_idx]
                     digit_idx += 1
+            return result
+        else:
+            return digit_pattern
+
+    def _cnpj_mask_pattern(self, cnpj: str) -> str:
+        is_formatted = not bool(re.fullmatch(r'\d{14}', cnpj))
+        digits = re.sub(r'\D', '', cnpj)
+
+        if self.level == 'high':
+            digit_pattern = 'X' * 14
+        elif self.level == 'low':
+            # Revela filial e dígitos verificadores (últimos 6)
+            digit_pattern = 'X' * 8 + digits[8:14]
+        else:
+            # Padrão: revela raiz (dígitos 2–7), oculta prefixo e sufixo
+            digit_pattern = 'X' * 2 + digits[2:8] + 'X' * 6
+
+        if is_formatted:
+            result = ''
+            digit_idx = 0
+            for char in cnpj:
+                if char.isdigit():
+                    result += digit_pattern[digit_idx]
+                    digit_idx += 1
+                else:
+                    result += char  # Separadores permanecem visíveis
             return result
         else:
             return digit_pattern

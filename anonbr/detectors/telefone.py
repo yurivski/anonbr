@@ -80,7 +80,7 @@ class PhoneDetector:
 
         # DDD deve star entre 11 e 99
         ddd = int(digits[:2])
-        if area_code < 11 or ddd > 99:
+        if ddd < 11 or ddd > 99:
             return False
 
         # Se tem 11 dígitos o terceiro deve ser 9 (celular)
@@ -112,7 +112,7 @@ class PhoneDetector:
 
         if level == 'high':
             ddd_masked = 'XX'
-            masked = 'XX' * len(remainder)
+            masked = 'X' * len(remainder)
 
         elif level == 'low':
             ddd_masked = ddd
