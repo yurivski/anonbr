@@ -9,15 +9,11 @@ from typing import Optional
 
 class CNPJDetector:
     # Sistema de redundância de padrões regex
-    formatted_pattern = [
-        r'\b\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}\b', # 12.345.678/0001-90
-        r'\b\d{2}\.?\d{3}\.?\d{3}\/?\d{4}-?\d{2}\b', # 12345678/0001-90, 12.345.678/000190
-        r'\b\d{2}[\s\.]*\d{3}[\s\.]*\d{3}[\s\/]*\d{4}[\s\-]*\d{2}\b', # 12 345 678 0001 90, 12 . 345 . 678 / 0001 - 90
-        ] 
+    formatted_pattern = r'\b\d{2}[.\s\/-]?\d{3}[.\s\/-]?\d{3}[.\s\/-]?\d{4}[.\s\/-]?\d{2}\b'
     unformatted_pattern = r'\b\d{14}\b' # 12345678000190
 
     def __init__(self):
-        self.formatted_regex = re.compile('|'.join(self.formatted_pattern))
+        self.formatted_regex = re.compile(self.formatted_pattern)
         self.unformatted_regex = re.compile(self.unformatted_pattern)
 
     # Detecta os padrões
