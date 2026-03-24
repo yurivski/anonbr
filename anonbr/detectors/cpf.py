@@ -10,9 +10,8 @@ import re
 from typing import Optional
 
 class CPFDetector:
-    # Detecta e mascara números de CPF nos padrões: 123.456.789-09 ou 12345678909
-
-    formatted_pattern = r'\b\d{3}[.\s\/-]?\d{3}[.\s\/-]?\d{3}[.\s\/-]?\d{2}\b'
+    # Detecta e mascara números de CPF em vários formatos
+    formatted_pattern = r'\b\d{3}[.\s\/-]\d{3}[.\s\/-]\d{3}[.\s\/-]\d{2}\b'
     unformatted_pattern = r'\b\d{11}\b'
 
     def __init__(self):
