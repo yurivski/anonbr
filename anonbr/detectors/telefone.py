@@ -22,7 +22,7 @@ class PhoneDetector:
     ]
 
     def __init__(self):
-        self.regexes = [re.compile(pattern) for pattern in self.patterns]
+        self.regexes = [re.compile(p) for p in self.patterns]
 
     def detect(self, text: str) -> list:
         """
