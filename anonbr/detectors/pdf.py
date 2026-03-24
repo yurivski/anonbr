@@ -40,8 +40,8 @@ class PDFDetector:
             'cnpj_unformatted': self.detect_cnpj.unformatted_regex,
             'email': self.detect_email.regex,
             'phone_international': self.detect_phone.regexes[0],
-            'phone_ddd': self.detect_phone.regexes[1],
-            'phone_digits': self.detect_phone.regexes[2],
+            'phone_ddd_mobile':    self.detect_phone.regexes[1],
+            'phone_ddd_landline':  self.detect_phone.regexes[2],
         }
 
     def _extract_text_with_mapping(self, chars):
@@ -107,8 +107,8 @@ class PDFDetector:
             ('cnpj', 'cnpj_unformatted'),
             ('email', 'email'),
             ('phone', 'phone_international'),
-            ('phone', 'phone_ddd'),
-            ('phone', 'phone_digits'),
+            ('phone', 'phone_ddd_mobile'),
+            ('phone', 'phone_ddd_landline'),
         ]
 
         for data_type, pattern_name in pattern_order:
@@ -126,8 +126,8 @@ class PDFDetector:
 
         phone_patterns = [
             self.patterns['phone_international'],
-            self.patterns['phone_ddd'],
-            self.patterns['phone_digits'],
+            self.patterns['phone_ddd_mobile'],
+            self.patterns['phone_ddd_landline'],
         ]
 
         parts = text.split('/')
@@ -160,6 +160,8 @@ class PDFDetector:
 
         # pdfplumber detecta caracteres e constrói mapa de mascaramento
         mask_map = self._build_mask_map(pdf_path, summary)
+
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
         if not mask_map:
             doc = fitz.open(pdf_path)
@@ -286,9 +288,10 @@ class PDFDetector:
         default: XXX.096.XXX-XX (meio revelado)
         low:     XXX.XX6.646-08 (final revelado)
         """
-        is_formatted = '.' in cpf or '-' in cpf
-        digits = re.sub(r'\D', '', cpf)
 
+        digits = ''.join(re.findall(r'\d', cpf))
+        is_formatted = bool(re.findall(r'[.\-]', cpf))
+        
         if self.level == 'high':
             digit_pattern = 'X' * 11
         elif self.level == 'low':
@@ -300,7 +303,7 @@ class PDFDetector:
             result = ''
             digit_idx = 0
             for char in cpf:
-                if char in '.-':
+                if not char.isdigit():
                     result += char  # Separadores permanecem visíveis
                 else:
                     result += digit_pattern[digit_idx]
@@ -310,8 +313,8 @@ class PDFDetector:
             return digit_pattern
 
     def _cnpj_mask_pattern(self, cnpj: str) -> str:
-        is_formatted = not bool(re.fullmatch(r'\d{14}', cnpj))
-        digits = re.sub(r'\D', '', cnpj)
+        is_formatted = bool(re.findall(r'[.\/-]', cnpj))
+        digits = ''.join(re.findall(r'\d', cnpj))
 
         if self.level == 'high':
             digit_pattern = 'X' * 14
@@ -368,7 +371,8 @@ class PDFDetector:
         default: +55 (21) XXXXX-5678 (DDD + últimos 4 revelados)
         low:     +55 (21) XXXX2-3456 (DDD + últimos 5 revelados)
         """
-        digits = re.sub(r'\D', '', phone)
+        digits = ''.join(re.findall(r'\d', phone))
+        is_formatted = bool(re.findall(r'[()+ -]', phone))
 
         if digits.startswith('55') and len(digits) > 11:
             has_country = True
