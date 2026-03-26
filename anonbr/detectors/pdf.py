@@ -220,19 +220,28 @@ class PDFDetector:
                 # Determinar quais índices de caractere mascarar
                 chars_to_mask = self._get_chars_to_mask(page_text, detections)
 
-                # Construir posições das barras a partir das bounding boxes dos caracteres
-                page_bars = []
+                # Coleta bounding boxes dos chars a mascarar
+                rects = []
                 for text_idx in sorted(chars_to_mask.keys()):
                     if text_idx in text_to_char:
                         char_idx = text_to_char[text_idx]
-                        if char_idx < len(chars):
+                        if char_idx < len(chars):   
                             c = chars[char_idx]
-                            page_bars.append({
-                                'x0': c['x0'],
-                                'top': c['top'],
-                                'x1': c['x1'],
-                                'bottom': c['bottom'],
-                            })
+                            rects.append((
+                                c['x0'],
+                                c['top'],
+                                c['x1'],
+                                c['bottom']
+                            ))
+
+                # Funde chars da mesma linha com gap menor que a largura de um caractere
+                page_bars = []
+                for rect in rects:
+                    char_width = rect[2] - rect[0]
+                    if page_bars and abs(rect[1] - page_bars[-1]['top']) < 1 and (rect[0] - page_bars[-1]['x1']) < char_width:
+                        page_bars[-1]['x1'] = rect[2]
+                    else:
+                        page_bars.append({'x0': rect[0], 'top': rect[1], 'x1': rect[2], 'bottom': rect[3]})
 
                 if page_bars:
                     mask_map[page_num] = page_bars
