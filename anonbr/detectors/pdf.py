@@ -183,16 +183,11 @@ class PDFDetector:
                     text='X',
                     fontname="helv",
                     fontsize=1,
-                    fill=(1, 1, 1),
+                    fill=(0, 0, 0),
                     text_color=(1, 1, 1),  # Texto branco (invisível)
                 )
 
             page.apply_redactions()
-
-            # Desenha tarjas pretas por cima
-            for bar in bars:
-                rect = fitz.Rect(bar['x0'], bar['top'], bar['x1'], bar['bottom'])
-                page.draw_rect(rect, color=(0, 0, 0), fill=(0, 0, 0))
 
             summary['pages_processed'] += 1
 
