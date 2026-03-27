@@ -1,9 +1,8 @@
 # Copyright (C) 2026 Yuri Pontes
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-"""
-Detecta e mascara dados sensíveis (CPF, email, telefone) em arquivos PDF.
-"""
+
+# Detecta e mascara dados sensíveis (CPF, CNPJ, email, telefone) em arquivos PDF.
 
 import re
 import os
@@ -18,11 +17,10 @@ from anonbr.detectors.telefone import PhoneDetector
 
 class PDFDetector:
     """
-    Detecta e mascara padrões de CPF, email e telefone em documentos PDF.
-    Usa posicionamento em nível de caractere pra desenhar barras pretas
-    apenas sobre os caracteres exatos que precisam ser mascarados.
+    Detecta e mascara padrões regex definidos, em documentos PDF.
+    Usa posicionamento em nível de caractere pra desenhar barras pretas apenas sobre os caracteres
+    exatos que precisam ser mascarados.
     """
-
     def __init__(self, level='default'):
         self.level = level
         self.detect_cpf = CPFDetector()
@@ -68,8 +66,8 @@ class PDFDetector:
     # Detecção
     def detect(self, pdf_path: str) -> dict:
         """
-        Lê um PDF e detecta todos os padrões de dados sensíveis e retorna dict 
-        com as ocorrências por página.
+        Lê um PDF e detecta todos os padrões de dados sensíveis e retorna dict com as ocorrências 
+        por página.
         """
         findings = {}
 
@@ -81,7 +79,6 @@ class PDFDetector:
 
                 # Construir texto a partir dos caracteres com quebras de linha
                 page_text, _ = self._extract_text_with_mapping(chars)
-
                 detections = self._detect_in_text(page_text)
 
                 if detections:
@@ -123,7 +120,9 @@ class PDFDetector:
                 detections.append((data_type, match.group(), start, end))
                 for pos in range(start, end):
                     used_positions.add(pos)
-
+        
+        # Busca telefones no texto separados por '/' pra capturar números que aparecem após barras
+        # e não foram detectados na passagem anterior
         phone_patterns = [
             self.patterns['phone_international'],
             self.patterns['phone_ddd_mobile'],
@@ -158,7 +157,7 @@ class PDFDetector:
         """
         summary = {'cpf': 0, 'cnpj': 0, 'email': 0, 'phone': 0, 'pages_processed': 0}
 
-        # pdfplumber detecta caracteres e constrói mapa de mascaramento
+        # Detecta caracteres e constrói mapa de mascaramento com pdfplumber
         mask_map = self._build_mask_map(pdf_path, summary)
 
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
@@ -169,13 +168,13 @@ class PDFDetector:
             doc.close()
             return summary
 
-        # pymupdf desenha barras pretas sobre os caracteres mascarados
+        # Desenha barras pretas sobre os caracteres mascarados com pymupdf
         doc = fitz.open(pdf_path)
 
         for page_num, bars in tqdm(mask_map.items(), desc="Censurando", unit="pág"):
             page = doc[page_num]
 
-            # Apaga o texto original permanentemente
+            # Adiciona anotação de redação sobre cada região sensível
             for bar in bars:
                 rect = fitz.Rect(bar['x0'], bar['top'], bar['x1'], bar['bottom'])
                 page.add_redact_annot(
@@ -241,7 +240,12 @@ class PDFDetector:
                     if page_bars and abs(rect[1] - page_bars[-1]['top']) < 1 and (rect[0] - page_bars[-1]['x1']) < char_width:
                         page_bars[-1]['x1'] = rect[2]
                     else:
-                        page_bars.append({'x0': rect[0], 'top': rect[1], 'x1': rect[2], 'bottom': rect[3]})
+                        page_bars.append({
+                            'x0': rect[0],
+                            'top': rect[1],
+                            'x1': rect[2],
+                            'bottom': rect[3]
+                        })
 
                 if page_bars:
                     mask_map[page_num] = page_bars
@@ -326,7 +330,7 @@ class PDFDetector:
             # Revela filial e dígitos verificadores (últimos 6)
             digit_pattern = 'X' * 8 + digits[8:14]
         else:
-            # Padrão: revela raiz (dígitos 2–7), oculta prefixo e sufixo
+            # Padrão: mascara prefixo e sufixo, revela parte central da raiz (dígitos 3–8)
             digit_pattern = 'X' * 2 + digits[2:8] + 'X' * 6
 
         if is_formatted:
@@ -425,12 +429,12 @@ class PDFDetector:
 
 # Funções auxiliares
 def detect_pdf(pdf_path: str) -> dict:
-    # Função auxiliar para detecção rápida.
+    """Função auxiliar pra detecção rápida de dados sensíveis em um PDF."""
     detector = PDFDetector()
     return detector.detect(pdf_path)
 
 
 def mask_pdf(pdf_path: str, output_path: str, level: str = 'default') -> dict:
-    # Função auxiliar para mascaramento rápido.
+    """Função auxiliar pra mascaramento rápido de dados sensíveis em um PDF."""
     detector = PDFDetector(level=level)
     return detector.mask(pdf_path, output_path)
