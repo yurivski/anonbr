@@ -67,6 +67,17 @@ class TestCNPJDetector:
         assert '-' not in self.detector.mask(unformatted_cnpj)
 
 
+    def test_no_detect_sequence_longer_than_cnpj(self):
+        text = "Código: 112223330001810000"
+        results = self.detector.detect(text)
+        assert len(results) == 0
+
+    def test_no_detect_unformatted_sequence_longer_than_cnpj(self):
+        text = "ID: 112223330001819999"
+        results = self.detector.detect(text)
+        assert len(results) == 0
+
+
 class TestCNPJHelper:
     def test_helper_detect_cnpj(self):
         text = "CNPJ: 11.222.333/0001-81"
@@ -86,3 +97,13 @@ class TestCNPJHelper:
         masked = mask_cnpj(cnpj, level='high')
 
         assert masked == "XX.XXX.XXX/XXXX-XX"
+
+    def test_helper_no_detect_sequence_longer_than_cnpj(self):
+        text = "Código: 112223330001810000"
+        results = detect_cnpj(text)
+        assert len(results) == 0
+
+    def test_helper_no_detect_unformatted_sequence_longer_than_cnpj(self):
+        text = "ID: 112223330001819999"
+        results = detect_cnpj(text)
+        assert len(results) == 0

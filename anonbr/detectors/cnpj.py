@@ -9,8 +9,8 @@ from typing import Optional
 
 class CNPJDetector:
     # Padrões de CNPJ com várias formatações
-    formatted_pattern = r'\b\d{2}[.\s\/-]?\d{3}[.\s\/-]?\d{3}[.\s\/-]?\d{4}[.\s\/-]?\d{2}\b'
-    unformatted_pattern = r'\b\d{14}\b'
+    formatted_pattern = r'(?<!\d)\d{2}[.\s\/-]?\d{3}[.\s\/-]?\d{3}[.\s\/-]?\d{4}[.\s\/-]?\d{2}(?!\d)'
+    unformatted_pattern = r'(?<!\d)\d{14}(?!\d)'
 
     def __init__(self):
         self.formatted_regex = re.compile(self.formatted_pattern)

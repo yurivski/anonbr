@@ -11,8 +11,8 @@ from typing import Optional
 
 class CPFDetector:
     # Detecta e mascara números de CPF em vários formatos
-    formatted_pattern = r'\b\d{3}[.\s\/-]\d{3}[.\s\/-]\d{3}[.\s\/-]\d{2}\b'
-    unformatted_pattern = r'\b\d{11}\b'
+    formatted_pattern = r'(?<!\d)\d{3}[.\s\/-]\d{3}[.\s\/-]\d{3}[.\s\/-]\d{2}(?!\d)'
+    unformatted_pattern = r'(?<!\d)\d{11}(?!\d)'
 
     def __init__(self):
         self.formatted_regex = re.compile(self.formatted_pattern)

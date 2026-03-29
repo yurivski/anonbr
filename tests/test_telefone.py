@@ -131,6 +131,17 @@ class TestPhoneDetector:
         assert len(results) == 1
         assert results[0][0] == "(21) 9 9876-5432"
 
+    def test_no_detect_sequence_longer_than_phone(self):
+        text = "Código: 219876543210000"
+        results = self.detector.detect(text)
+        assert len(results) == 0
+
+    def test_no_detect_unformatted_phone_adjacent_to_digits(self):
+        text = "ID: 121987654321"
+        results = self.detector.detect(text)
+        assert len(results) == 0
+
+
 class TestPhoneHelpers:
 
     def test_helper_detect_phone_separated_by_pipe(self):
@@ -172,5 +183,15 @@ class TestPhoneHelpers:
     def test_helper_mask_phone_high_level(self):
         phone = "(21) 98765-4321"
         masked = mask_phone(phone, level='high')
-        
+
         assert "4321" not in masked
+
+    def test_helper_no_detect_sequence_longer_than_phone(self):
+        text = "Código: 219876543210000"
+        results = detect_phone(text)
+        assert len(results) == 0
+
+    def test_helper_no_detect_unformatted_phone_adjacent_to_digits(self):
+        text = "ID: 121987654321"
+        results = detect_phone(text)
+        assert len(results) == 0

@@ -64,6 +64,17 @@ class TestCPFDetector:
         assert '.' not in self.detector.mask(unformatted_cpf)
         assert '-' not in self.detector.mask(unformatted_cpf)
 
+    def test_no_detect_sequence_longer_than_cpf(self):
+        text = "Registro: 375096646081234"
+        results = self.detector.detect(text)
+        assert len(results) == 0
+
+    def test_no_detect_formatted_cpf_adjacent_to_digits(self):
+        text = "ID: 1375.096.646-08"
+        results = self.detector.detect(text)
+        assert len(results) == 0
+
+
 class TestCPFHelper:
     def test_helper_detect_cpf(self):
         text = "CPF: 375.096.646-08"
@@ -83,3 +94,13 @@ class TestCPFHelper:
         masked = mask_cpf(cpf, level='high')
 
         assert masked == "XXX.XXX.XXX-XX"
+
+    def test_helper_no_detect_sequence_longer_than_cpf(self):
+        text = "Registro: 375096646081234"
+        results = detect_cpf(text)
+        assert len(results) == 0
+
+    def test_helper_no_detect_formatted_cpf_adjacent_to_digits(self):
+        text = "ID: 1375.096.646-08"
+        results = detect_cpf(text)
+        assert len(results) == 0
