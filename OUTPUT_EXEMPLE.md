@@ -1,4 +1,8 @@
+<div align="center">
+
 ## Exemplos de outputs em cada nível de censura
+
+</div>
 
 A biblioteca oferece três níveis de privacidade. Cada nível controla quanta informação fica visível após o mascaramento.
 
@@ -6,7 +10,7 @@ A biblioteca oferece três níveis de privacidade. Cada nível controla quanta i
 **Low:** Revela mais informação. Útil para conferência em ambientes controlados.  
 **Default:** Revela uma parte pequena para conferência, sem expor o dado completo.
 
----
+<div align="center">
 
 |**Extensão**|**Nivel**|**CPF**|**Telefone**|**E-Mail**| **CNPJ**|
 |------------|---------|-------|------------|----------|-----------|
@@ -18,7 +22,9 @@ A biblioteca oferece três níveis de privacidade. Cada nível controla quanta i
 |**PDF**|**LOW**|███.██6.646-08 | +55 (21) ████5-5678 | ████osilva@empresa.com.br |██.███.███/1098-65|
 ||**DEFAULT**|███.096.███-██ | +55 (21) █████-5678 | b███osilva@gmail.com |██.765.432/████-██|
 
----
+<br>
 
 ![Exemplo de output](/images/exemplo_output_v1.2.png)
+
+</div>
 
