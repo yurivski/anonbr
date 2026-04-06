@@ -1,0 +1,15 @@
+.venv/
+.git/
+.github/
+.pytest_cache/
+.coverage
+__pycache__/
+*.pyc
+*.pyo
+images/
+update_test/
+tests/
+.vscode/
+.gitignore
+CONTRIBUTING.md
+LICENSE
