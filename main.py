@@ -1,8 +1,3 @@
-"""
-Script para ler e executar a anonimização em arquivos CSV.
-Lê o CSV, aplica os detectores e salva o resultado.
-"""
-
 import os
 import sys
 import pandas as pd
