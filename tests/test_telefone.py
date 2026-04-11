@@ -1,3 +1,17 @@
+"""
+Testes de detecção e mascaramento de telefone.
+
+A partir da refatoração para YAML, os padrões regex não estão mais hardcoded
+em telefone.py, são carregados de config/patterns.yaml via pattern_loader,
+na mesma ordem em que aparecem no YAML (do mais específico ao mais genérico).
+
+O comportamento externo (o que detect() e mask() retornam) não muda;
+apenas a origem dos padrões mudou. Os testes abaixo continuam válidos
+e garantem que a nova fonte de padrões produz os mesmos resultados.
+
+Para testar o carregamento do YAML em si, veja tests/test_pattern_loader.py.
+"""
+
 import pytest
 from anonbr.detectors.telefone import PhoneDetector, detect_phone, mask_phone
 

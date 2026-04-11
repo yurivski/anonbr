@@ -1,3 +1,16 @@
+"""
+Testes de detecção e mascaramento de e-mail.
+
+A partir da refatoração para YAML, o padrão regex não está mais hardcoded
+em email.py, é carregado de config/patterns.yaml via pattern_loader.
+
+O comportamento externo (o que detect() e mask() retornam) não muda;
+apenas a origem do padrão mudou. Os testes abaixo continuam válidos
+e garantem que a nova fonte de padrões produz os mesmos resultados.
+
+Para testar o carregamento do YAML em si, veja tests/test_pattern_loader.py.
+"""
+
 import pytest
 from anonbr.detectors.email import EmailDetector, detect_email, mask_email
 

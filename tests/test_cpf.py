@@ -1,5 +1,14 @@
 """
-Arquivo teste para detecção, validação e mascaramento do CPF.
+Testes de detecção e mascaramento de CPF.
+
+A partir da refatoração para YAML, os padrões regex não estão mais hardcoded
+em cpf.py, eles são carregados de config/patterns.yaml via pattern_loader.
+
+O comportamento externo (o que detect() e mask() retornam) não muda;
+apenas a origem dos padrões mudou. Os testes abaixo continuam válidos
+e garantem que a nova fonte de padrões produz os mesmos resultados.
+
+Para testar o carregamento do YAML em si, veja tests/test_pattern_loader.py.
 """
 
 import pytest

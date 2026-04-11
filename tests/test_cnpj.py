@@ -1,3 +1,16 @@
+"""
+Testes de detecção e mascaramento de CNPJ.
+
+A partir da refatoração para YAML, os padrões regex não estão mais hardcoded
+em cnpj.py, eles são carregados de config/patterns.yaml via pattern_loader.
+
+O comportamento externo (o que detect() e mask() retornam) não muda;
+apenas a origem dos padrões mudou. Os testes abaixo continuam válidos
+e garantem que a nova fonte de padrões produz os mesmos resultados.
+
+Para testar o carregamento do YAML em si, veja tests/test_pattern_loader.py.
+"""
+
 import pytest
 from anonbr.detectors.cnpj import CNPJDetector, detect_cnpj, mask_cnpj
 
