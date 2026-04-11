@@ -1,0 +1,98 @@
+cpf:
+  description: "Detecção de CPF brasileiro (formatado e não formatado)"
+  priority: 10
+  patterns:
+    - name: formatted
+      regex: r'(?<!\d)\d{3}[.\s\/-]\d{3}[.\s\/-]\d{3}[.\s\/-]\d{2}(?!\d)'
+      description: "CPF formatado"
+      is_formatted: true
+      test_cases:
+        - input: "Meu CPF é 375.096.646-08"
+          expected: ["375.096.646-08"]
+          is_formatted: true
+        - input: "CPF: 37509664608"
+          expected: ["37509664608"]
+          is_formatted: false
+
+    - name: unformatted
+      regex: r'(?<!\d)\d{11}(?!\d)'
+      description: "CPF apenas números"
+      is_formatted: false
+      test_cases:
+        - input: "CPF: 37509664608"
+          expected: ["37509664608"]
+          is_formatted: false
+
+cnpj:
+  description: "Detecção de CNPJ brasileiro"
+  priority: 15
+  patterns:
+    - name: formatted
+      regex: r'(?<!\d)\d{2}[.\s\/-]?\d{3}[.\s\/-]?\d{3}[.\s\/-]?\d{4}[.\s\/-]?\d{2}(?!\d)'
+      description: "CNPJ formatado"
+      is_formatted: true
+      test_cases:
+        - input: "CNPJ da empresa: 12.345.678/9012-34"
+          expected: ["12.345.678/9012-34"]
+          is_formatted: true
+
+    - name: unformatted
+      regex: r'(?<!\d)\d{14}(?!\d)'
+      description: "CNPJ apenas números"
+      is_formatted: false
+      test_cases:
+        - input: "CNPJ: 12345678901234"
+          expected: ["12345678901234"]
+          is_formatted: false
+
+email:
+  description: "Detecção de e-mail"
+  priority: 20
+  patterns:
+    - name: standard
+      regex: r'\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b'
+      description: "E-mail clássico"
+      test_cases:
+        - input: "contato@empresa.com.br"
+          expected: ["contato@empresa.com.br"]
+        - input: "Meu e-mail é teste123@dominio.com"
+          expected: ["teste123@dominio.com"]
+
+telefone:
+  description: "Detecção de telefone brasileiro (vários formatos)"
+  priority: 30
+  patterns:
+    - name: international
+      regex: r'(?<!\d)\+55\s?\(?\d{2}\)?\s?\d{4,5}-?\d{4}(?!\d)'
+      description: "+55 (21) 98765-4321"
+      test_cases:
+        - input: "+55 (21) 98765-4321"
+          expected: ["+55 (21) 98765-4321"]
+
+    - name: with_nono_digit_space
+      regex: r'(?<!\d)\(?\d{2}\)?\s?\d\s?\d{4}-?\d{4}(?!\d)'
+      description: "(21) 9 8765-4321"
+      test_cases:
+        - input: "(21) 9 8765-4321"
+          expected: ["(21) 9 8765-4321"]
+
+    - name: with_ddd
+      regex: r'(?<!\d)\(?\d{2}\)?\s?\d{4,5}-?\d{4}(?!\d)'
+      description: "(21) 98765-4321"
+      test_cases:
+        - input: "(21) 98765-4321"
+          expected: ["(21) 98765-4321"]
+
+    - name: only_numbers
+      regex: r'(?<!\d)\d{10,11}(?!\d)'
+      description: "Apenas números"
+      test_cases:
+        - input: "21987654321"
+          expected: ["21987654321"]
+
+    - name: short
+      regex: r'(?<!\d)\d{4,5}-?\d{4}(?!\d)'
+      description: "Telefone curto sem DDD"
+      test_cases:
+        - input: "99876-5432"
+          expected: ["99876-5432"]
