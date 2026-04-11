@@ -13,14 +13,13 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-"""
-Biblioteca Python para detectar e anonimizar os dados sensíveis (CPF, email, telefone).
-"""
+# Biblioteca para detectar e anonimizar dados sensíveis.
 
 __version__ = '1.2.1'
 __author__ = 'Yuri Pontes'
 __license__ = 'AGPL-3.0'
 
+from anonbr.pattern_loader import load_raw, get_patterns, get_compiled, get_compiled_by_name
 from anonbr.detectors.cpf import CPFDetector, detect_cpf, mask_cpf
 from anonbr.detectors.cnpj import CNPJDetector, detect_cnpj, mask_cnpj
 from anonbr.detectors.email import EmailDetector, detect_email, mask_email
@@ -32,13 +31,19 @@ __all__ = [
     # Classe principal
     'Anonymizer',
 
+    # Carregador de padrões (acesso direto ao YAML)
+    'load_raw',
+    'get_patterns',
+    'get_compiled',
+    'get_compiled_by_name',
+
     # Classes detectores
     'CPFDetector',
     'CNPJDetector',
     'EmailDetector',
     'PhoneDetector',
     'PDFDetector',
-    
+
     # Funções auxiliares - CPF
     'detect_cpf',
     'mask_cpf',
@@ -50,11 +55,11 @@ __all__ = [
     # Funções auxiliares - Email
     'detect_email',
     'mask_email',
-    
+
     # Funções auxiliares - Telefone
     'detect_phone',
     'mask_phone',
-    
+
     # Funções auxiliares - PDF
     'detect_pdf',
     'mask_pdf',
