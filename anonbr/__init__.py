@@ -15,7 +15,7 @@
 
 # Biblioteca para detectar e anonimizar dados sensíveis.
 
-__version__ = '1.2.1'
+__version__ = '0.4.0'
 __author__ = 'Yuri Pontes'
 __license__ = 'AGPL-3.0'
 

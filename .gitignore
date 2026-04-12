@@ -10,6 +10,4 @@ htmlcov/.vscode/
 
 update_test/
 uv.lock
-CHANGELOG.md
 ARCHITECTURE.md
-CONTRIBUTING.md

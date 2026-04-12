@@ -8,15 +8,18 @@
 
 Biblioteca Python para detectar e mascarar dados pessoais sensíveis em DataFrames.
 
-Este projeto nasceu após eu identificar em alguns posts do LinkedIn em que devs e analistas ficam P* da vida com DBAs (ou quem quer que seja) que não liberam acesso ao banco de dados para o desenvolvimento ou testes. Identifica automaticamente [CPF](#cpf), [email](#email) e [Telefone](#telefone) em colunas e aplica mascaramento com [três níveis de privacidade.](#níveis-de-mascaramento)  
+Este projeto nasceu após eu identificar em alguns posts do LinkedIn em que devs e analistas ficam P* da vida com DBAs (ou quem quer que seja) que não liberam acesso ao banco de dados para o desenvolvimento ou testes. Identifica automaticamente [dados sensíveis em arquivos](#funcionalidades---resumo) e aplica mascaramento com [três níveis de privacidade.](#níveis-de-mascaramento)  
 
+> [!NOTE]
 > [**Contribua sem comprimisso**](/CONTRIBUTING.md), vamos escrever códigos bugados e desbugar **em prol do desenvolvimento pessoal e profissional.** Sintam-se livres para contribuir implementando novas funcionalidades, relatando erros ou sugestões. 
 
 *Leia o [**CONTRIBUTING.md**](/CONTRIBUTING.md) para mais detalhes.*
 
 ## Introdução
 
-O projeto foi desenvolvido para estimular programadores de Júniors a Sêniors nos estudos e treinamentos de conceitos tanto de Python quanto de Versionamento, aplicados a um projeto, inicialmente simples de biblioteca de mascaramento com foco na **LGPD** (Lei Geral de Proteção de Dados) e no **tratamento de dados pessoais no contexto brasileiro**.  
+Projeto de ferramenta para detecção e mascaramento de dados sensíveis em arquivos CSV e PDF, para o compartilhamento seguro conforme a **LGPD** (Lei Geral de Proteção de Dados) e no **tratamento de dados pessoais no contexto brasileiro**.  
+
+A versão atual centraliza todos os padrões regex num único arquivo de configuração, o `config/patterns.yaml`, carregado pelo módulo `pattern_loader`. Isso significa que nenhum detector guarda strings de regex no próprio código: todos importam do mesmo lugar, facilitando ajustes e a adição de novos padrões sem precisar editar múltiplos arquivos. Se você quiser contribuir com um novo padrão ou variação de um padrão existente, esse é o único arquivo que precisa ser modificado para a parte de detecção. Veja mais no [CONTRIBUTING.md](/CONTRIBUTING.md).
 
 ***Todos os dados sensíveis expostos neste repositório são fictícios, gerados por IA como ilustração para exibição de testes.***
 
@@ -103,8 +106,12 @@ O detector cobre os formatos brasileiros mais comuns, do mais específico para o
 **2. Com DDD:** (21) 98765-4321, (21) 3456-7890  
 **3. Apenas números:** 21987654321, 2134567890  
 
-A ordem importa: o padrão internacional é testado primeiro. Se um número já foi encontrado por um padrão mais específico, os padrões seguintes ignoram aquela posição no texto. Isso evita que `+55 (21) 98765-4321`
-seja detectado duas vezes (uma pelo padrão internacional e outra pelo padrão com DDD).
+A ordem importa: o padrão internacional é testado primeiro. Se um número já foi encontrado por um padrão mais específico, os padrões seguintes ignoram aquela posição no texto. Isso evita que `+55 (21) 98765-4321` seja detectado duas vezes (uma pelo padrão internacional e outra pelo padrão com DDD).
+
+Essa deduplicação por posição é a primeira passada da detecção. Depois dela, o detector faz uma segunda varredura dividindo o texto pelo caractere `'/'`. Isso existe porque em PDFs digitalizados com dados em lista, como `21987654321/21876543210`, a barra pode estar justamente na borda de um número e quebrar o lookbehind do padrão, fazendo o segundo telefone passar em branco na primeira passada. A segunda varredura cobre esse caso.
+
+> [!NOTE]   
+> Essa segunda passada é uma solução temporária para PDFs com documentos digitalisados, caso tenham listas de dados separadas por `'/'`. Sacrifica um pouco de desempenho, mas nada relevante em documentos com cerca de 300 páginas e aproximadamente 500 dados. A detecção via análise de imagem poderia resolver de forma mais robusta, mas ainda não foi estudada para o projeto.
 
 
 ## Como funciona o mascaramento
