@@ -1,121 +1,98 @@
 """
-Testes de detecção e mascaramento de e-mail.
+Testes de detecção e mascaramento de CNPJ.
 
-A partir da refatoração para YAML, o padrão regex não está mais hardcoded
-em email.py, é carregado de config/patterns.yaml via pattern_loader.
+Os padrões regex não estão mais hardcoded em email.py, 
+eles são carregados de config/patterns.yaml via pattern_loader.
 
 O comportamento externo (o que detect() e mask() retornam) não muda;
-apenas a origem do padrão mudou. Os testes abaixo continuam válidos
+apenas a origem dos padrões mudou. Os testes abaixo continuam válidos
 e garantem que a nova fonte de padrões produz os mesmos resultados.
 
 Para testar o carregamento do YAML em si, veja tests/test_pattern_loader.py.
 """
 
 import pytest
-from anonbr.detectors.email import EmailDetector, detect_email, mask_email
+import yaml
+from pathlib import Path
+from anonbr.detectors.email import EmailDetector
+from anonbr.detectors.email import detect_email
+from anonbr.detectors.email import mask_email
 
-class TestEmailDetector:
-    def setup_method(self):
-        self.detector = EmailDetector()
-    
-    def test_detect_simple_email(self):
-        text = "Contato: joao@email.com"
-        results = self.detector.detect(text)
-        
-        assert results[0][0] == "joao@email.com"
+# Carrega patterns.yaml uma vez
+PATTERNS = yaml.safe_load(
+    Path("config/patterns.yaml").read_text(encoding="utf-8")
+)
 
-    def test_detect_email_with_dot(self):
-        text = "Email: joao.silva@empresa.com.br"
-        results = self.detector.detect(text)
-        
-        assert len(results) == 1
-        assert results[0][0] == "joao.silva@empresa.com.br"
-    
-    def test_detect_email_with_plus(self):
-        text = "Email: usuario+tag@dominio.com"
-        results = self.detector.detect(text)
-        
-        assert len(results) == 1
-        assert results[0][0] == "usuario+tag@dominio.com"
-    
-    def test_detect_email_with_numbers(self):
-        text = "Contato: user123@test456.com"
-        results = self.detector.detect(text)
-        
-        assert len(results) == 1
-        assert results[0][0] == "user123@test456.com"
-    
-    def test_detect_multiple_emails(self):
-        text = "Contatos: joao@email.com e maria@outro.com.br"
-        results = self.detector.detect(text)
-        
-        assert len(results) == 2
-    
-    def test_detect_subdomain_email(self):
-        text = "Email: usuario@sub.dominio.com.br"
-        results = self.detector.detect(text)
-        
-        assert len(results) == 1
-    
-    def test_mask_email_default(self):
-        email = "joao@email.com"
-        masked = self.detector.mask(email, level='default')
-        
-        assert masked == "jxxx@email.com"
-    
-    def test_mask_email_default_long_name(self):
-        email = "joaosilva@email.com"
-        masked = self.detector.mask(email, level='default')
-        
-        assert masked == "jxxxxxxxx@email.com"
-        assert masked[0] == 'j'
-    
-    def test_mask_short_email(self):
-        email = "ab@email.com"
-        masked = self.detector.mask(email)
-        
-        assert masked == "ax@email.com"
-    
-    def test_mask_email_high_level(self):
-        email = "joao@email.com"
-        masked = self.detector.mask(email, level='high')
-        
-        assert masked == "xxxx@xxxxx.xxx"
+# Extrai os dados do detector específico
+DETECTOR_CONFIG = PATTERNS["email"]
 
-    def test_detect_email_not_in_url(self):
-        text = "Contato: usuario@empresa.com"
-        results = self.detector.detect(text)
-        assert len(results) == 1
+# Fixtures
+@pytest.fixture
+def detector():
+    """Cria uma instância do detector."""
+    return EmailDetector()
 
-    def test_detect_email_with_slash_no_protocol(self):
-        text = "Lista: email1@empresa.com/email2@empresa.com"
-        results = self.detector.detect(text)
-        assert len(results) == 2
-    
-    def test_mask_email_without_at(self):
-        email = "emailinvalido"
-        masked = self.detector.mask(email)
-        
-        assert masked == email
+# Testes de detecção parametrizados pelo YAML
+# Extrai test_cases de cada padrão pra usar no parametrize
+def _build_detect_cases():
+    """Monta lista de (input, expected, description) a partir do YAML."""
+    cases = []
+    for pattern in DETECTOR_CONFIG.get("patterns", []):
+        pattern_name = pattern.get("name", "unknown")
+        for tc in pattern.get("test_cases", []):
+            cases.append(
+                pytest.param(
+                    tc["input"],
+                    tc["expected"],
+                    id=f"{pattern_name}_{tc.get('description', 'case')}"
+                )
+            )
+    return cases
 
-class TestEmailHelpers:
 
-    def test_helper_detect_email(self):
-        text = "Email: teste@exemplo.com"
-        results = detect_email(text)
-        
-        assert len(results) == 1
-        assert "teste@exemplo.com" in results[0][0]
-    
-    def test_helper_mask_email(self):
-        email = "joao@email.com"
-        masked = mask_email(email)
-        
-        assert "@email.com" in masked
-        assert masked[0] == 'j'
-    
-    def test_helper_mask_email_high_level(self):
-        email = "joao@email.com"
-        masked = mask_email(email, level='high')
-        
-        assert masked == "xxxx@xxxxx.xxx"
+@pytest.mark.parametrize("text_input, expected", _build_detect_cases())
+def test_detect(detector, text_input, expected):
+    """Testa detecção usando os casos definidos no YAML."""
+    results = detector.detect(text_input)
+    found_texts = [r[0] for r in results]
+    assert found_texts == expected
+
+
+# Testes de mascaramento parametrizados pelo YAML
+def _build_mask_cases():
+    """Monta lista de (value, level, expected) a partir do YAML."""
+    cases = []
+    for mc in DETECTOR_CONFIG.get("mask_cases", []):
+        cases.append(
+            pytest.param(
+                mc["input"],
+                mc["level"],
+                mc["expected"],
+                id=f"{mc['level']}_{mc.get('description', 'case')}"
+            )
+        )
+    return cases
+
+
+@pytest.mark.parametrize("value, level, expected", _build_mask_cases())
+def test_mask(detector, value, level, expected):
+    """Testa mascaramento usando os casos definidos no YAML."""
+    result = detector.mask(value, level=level)
+    assert result == expected
+
+
+# Testes de helpers
+def test_helper_detect():
+    """Testa a função helper de detecção."""
+    # Usa o primeiro test_case do primeiro padrão como teste básico
+    first_case = DETECTOR_CONFIG["patterns"][0]["test_cases"][0]
+    results = detect_email(first_case["input"])
+    found_texts = [r[0] for r in results]
+    assert found_texts == first_case["expected"]
+
+
+def test_helper_mask():
+    """Testa a função helper de mascaramento."""
+    first_case = DETECTOR_CONFIG["mask_cases"][0]
+    result = mask_email(first_case["input"], level=first_case["level"])
+    assert result == first_case["expected"]

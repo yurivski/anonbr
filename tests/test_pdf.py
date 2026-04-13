@@ -121,9 +121,9 @@ class TestPDFDetection:
         detector = PDFDetector()
         findings = detector.detect(pdf_multiple_pages)
 
-        assert 0 in findings  # CPF na pág. 1
-        assert 1 in findings  # Email na pág. 2
-        assert 2 in findings  # Telefone na pág. 3
+        assert 0 in findings # CPF na pág. 1
+        assert 1 in findings # Email na pág. 2
+        assert 2 in findings # Telefone na pág. 3
 
 # Testes de padõres de mascaramento
 class TestPDFMaskPatterns:

@@ -1,8 +1,8 @@
 """
 Testes de detecção e mascaramento de CPF.
 
-A partir da refatoração para YAML, os padrões regex não estão mais hardcoded
-em cpf.py, eles são carregados de config/patterns.yaml via pattern_loader.
+Os padrões regex não estão mais hardcoded em cpf.py, 
+eles são carregados de config/patterns.yaml via pattern_loader.
 
 O comportamento externo (o que detect() e mask() retornam) não muda;
 apenas a origem dos padrões mudou. Os testes abaixo continuam válidos
@@ -12,104 +12,87 @@ Para testar o carregamento do YAML em si, veja tests/test_pattern_loader.py.
 """
 
 import pytest
-from anonbr.detectors.cpf import CPFDetector, detect_cpf, mask_cpf
+import yaml
+from pathlib import Path
+from anonbr.detectors.cpf import CPFDetector
+from anonbr.detectors.cpf import detect_cpf
+from anonbr.detectors.cpf import mask_cpf
 
-class TestCPFDetector:
-    def setup_method(self):
-        self.detector = CPFDetector()
+# Carrega patterns.yaml uma vez
+PATTERNS = yaml.safe_load(
+    Path("config/patterns.yaml").read_text(encoding="utf-8")
+)
 
-    def test_detect_formatted_cpf(self):
-        text = "Meu CPF é 375.096.646-08"
-        results = self.detector.detect(text)
+# Extrai os dados do detector específico
+DETECTOR_CONFIG = PATTERNS["cpf"]
 
-        assert len(results) == 1
-        assert results[0][0] == "375.096.646-08"
-        assert results[0][3] == True
+# Fixtures
+@pytest.fixture
+def detector():
+    """Cria uma instância do detector."""
+    return CPFDetector()
 
-    def test_detect_unformatted_cpf(self):
-        text = "CPF: 37509664608"
-        results = self.detector.detect(text)
-
-        assert len(results) == 1
-        assert results[0][0] == "37509664608"
-        assert results[0][3] == False
-
-    def test_detect_multiple_cpfs(self):
-        text = "CPF 1: 375.096.646-08 e CPF 2: 41358800960"
-        results = self.detector.detect(text)
-
-        assert len(results) == 2
-
-    def test_mask_formatted_cpf_default(self):
-        cpf = "123.456.789-09"
-        masked = self.detector.mask(cpf, level='default')
-
-        assert masked == "XXX.456.XXX-XX"
-
-    def test_mask_unformatted_cpf_default(self):
-        cpf = "19162686001"
-        masked = self.detector.mask(cpf, level='default')
-
-        assert masked == "XXX626XXXXX"
-
-    def test_mask_cpf_high_level(self):
-        cpf = "123.456.789.09"
-        masked = self.detector.mask(cpf, level='high')
-
-        assert masked == "XXX.XXX.XXX-XX"
-
-    def test_mask_unformatted_cpf_high_level(self):
-        cpf = "19162686001"
-        masked = self.detector.mask(cpf, level='high')
-
-        assert masked == "XXXXXXXXXXX"
-
-    def test_mask_preserves_format(self):
-        formatted_cpf = "91.626.860-01"
-        unformatted_cpf = "9162686001"
-
-        assert '.' in self.detector.mask(formatted_cpf)
-        assert '-' in self.detector.mask(formatted_cpf)
-        assert '.' not in self.detector.mask(unformatted_cpf)
-        assert '-' not in self.detector.mask(unformatted_cpf)
-
-    def test_no_detect_sequence_longer_than_cpf(self):
-        text = "Registro: 375096646081234"
-        results = self.detector.detect(text)
-        assert len(results) == 0
-
-    def test_no_detect_formatted_cpf_adjacent_to_digits(self):
-        text = "ID: 1375.096.646-08"
-        results = self.detector.detect(text)
-        assert len(results) == 0
+# Testes de detecção parametrizados pelo YAML
+# Extrai test_cases de cada padrão pra usar no parametrize
+def _build_detect_cases():
+    """Monta lista de (input, expected, description) a partir do YAML."""
+    cases = []
+    for pattern in DETECTOR_CONFIG.get("patterns", []):
+        pattern_name = pattern.get("name", "unknown")
+        for tc in pattern.get("test_cases", []):
+            cases.append(
+                pytest.param(
+                    tc["input"],
+                    tc["expected"],
+                    id=f"{pattern_name}_{tc.get('description', 'case')}"
+                )
+            )
+    return cases
 
 
-class TestCPFHelper:
-    def test_helper_detect_cpf(self):
-        text = "CPF: 375.096.646-08"
-        results = detect_cpf(text)
+@pytest.mark.parametrize("text_input, expected", _build_detect_cases())
+def test_detect(detector, text_input, expected):
+    """Testa detecção usando os casos definidos no YAML."""
+    results = detector.detect(text_input)
+    found_texts = [r[0] for r in results]
+    assert found_texts == expected
 
-        assert len(results) == 1
-        assert "375.096.646-08" in results[0][0]
 
-    def test_helper_mask_cpf(self):
-        cpf = "123.456.789-09"
-        masked = mask_cpf(cpf)
+# Testes de mascaramento parametrizados pelo YAML
+def _build_mask_cases():
+    """Monta lista de (value, level, expected) a partir do YAML."""
+    cases = []
+    for mc in DETECTOR_CONFIG.get("mask_cases", []):
+        cases.append(
+            pytest.param(
+                mc["input"],
+                mc["level"],
+                mc["expected"],
+                id=f"{mc['level']}_{mc.get('description', 'case')}"
+            )
+        )
+    return cases
 
-        assert "XXX" in masked
 
-    def test_helper_mask_cpf_high_level(self):
-        cpf = "123.456.789-09"
-        masked = mask_cpf(cpf, level='high')
+@pytest.mark.parametrize("value, level, expected", _build_mask_cases())
+def test_mask(detector, value, level, expected):
+    """Testa mascaramento usando os casos definidos no YAML."""
+    result = detector.mask(value, level=level)
+    assert result == expected
 
-        assert masked == "XXX.XXX.XXX-XX"
 
-    def test_helper_no_detect_sequence_longer_than_cpf(self):
-        text = "Registro: 375096646081234"
-        results = detect_cpf(text)
-        assert len(results) == 0
+# Testes de helpers
+def test_helper_detect():
+    """Testa a função helper de detecção."""
+    # Usa o primeiro test_case do primeiro padrão como teste básico
+    first_case = DETECTOR_CONFIG["patterns"][0]["test_cases"][0]
+    results = detect_cpf(first_case["input"])
+    found_texts = [r[0] for r in results]
+    assert found_texts == first_case["expected"]
 
-    def test_helper_no_detect_formatted_cpf_adjacent_to_digits(self):
-        text = "ID: 1375.096.646-08"
-        results = detect_cpf(text)
-        assert len(results) == 0
+
+def test_helper_mask():
+    """Testa a função helper de mascaramento."""
+    first_case = DETECTOR_CONFIG["mask_cases"][0]
+    result = mask_cpf(first_case["input"], level=first_case["level"])
+    assert result == first_case["expected"]

@@ -1,9 +1,8 @@
 """
-Testes de detecção e mascaramento de telefone.
+Testes de detecção e mascaramento de CNPJ.
 
-A partir da refatoração para YAML, os padrões regex não estão mais hardcoded
-em telefone.py, são carregados de config/patterns.yaml via pattern_loader,
-na mesma ordem em que aparecem no YAML (do mais específico ao mais genérico).
+Os padrões regex não estão mais hardcoded em telefone.py, 
+eles são carregados de config/patterns.yaml via pattern_loader.
 
 O comportamento externo (o que detect() e mask() retornam) não muda;
 apenas a origem dos padrões mudou. Os testes abaixo continuam válidos
@@ -13,199 +12,87 @@ Para testar o carregamento do YAML em si, veja tests/test_pattern_loader.py.
 """
 
 import pytest
-from anonbr.detectors.telefone import PhoneDetector, detect_phone, mask_phone
+import yaml
+from pathlib import Path
+from anonbr.detectors.telefone import PhoneDetector
+from anonbr.detectors.telefone import detect_phone
+from anonbr.detectors.telefone import mask_phone
+
+# Carrega patterns.yaml uma vez
+PATTERNS = yaml.safe_load(
+    Path("config/patterns.yaml").read_text(encoding="utf-8")
+)
+
+# Extrai os dados do detector específico
+DETECTOR_CONFIG = PATTERNS["telefone"]
+
+# Fixtures
+@pytest.fixture
+def detector():
+    """Cria uma instância do detector."""
+    return PhoneDetector()
+
+# Testes de detecção parametrizados pelo YAML
+# Extrai test_cases de cada padrão pra usar no parametrize
+def _build_detect_cases():
+    """Monta lista de (input, expected, description) a partir do YAML."""
+    cases = []
+    for pattern in DETECTOR_CONFIG.get("patterns", []):
+        pattern_name = pattern.get("name", "unknown")
+        for tc in pattern.get("test_cases", []):
+            cases.append(
+                pytest.param(
+                    tc["input"],
+                    tc["expected"],
+                    id=f"{pattern_name}_{tc.get('description', 'case')}"
+                )
+            )
+    return cases
 
 
-class TestPhoneDetector:
-    def setup_method(self):
-        self.detector = PhoneDetector()
-    
-    def test_detect_formatted_cellphone(self):
-        text = "Telefone: (21) 98765-4321"
-        results = self.detector.detect(text)
-        
-        assert len(results) == 1
-        assert "(21) 98765-4321" in results[0][0]
-    
-    def test_detect_formatted_landline(self):
-        text = "Fixo: (21) 3456-7890"
-        results = self.detector.detect(text)
-        
-        assert len(results) == 1
-    
-    def test_detect_unformatted_cellphone(self):
-        text = "WhatsApp: 21987654321"
-        results = self.detector.detect(text)
-        
-        assert len(results) == 1
-        assert "21987654321" in results[0][0]
-    
-    def test_detect_unformatted_landline(self):
-        text = "Telefone: 2134567890"
-        results = self.detector.detect(text)
-        
-        assert len(results) == 1
-    
-    def test_detect_with_country_code(self):
-        text = "Internacional: +55 21 98765-4321"
-        results = self.detector.detect(text)
-        
-        assert len(results) == 1
-        assert "+55" in results[0][0]
-    
-    def test_detect_multiple_phones(self):
-        text = "Cel: (21) 98765-4321 Fixo: (21) 3456-7890"
-        results = self.detector.detect(text)
-        
-        assert len(results) == 2
-    
-    def test_mask_cellphone_default(self):
-        phone = "(21) 98765-4321"
-        masked = self.detector.mask(phone, level='default')
-        
-        assert "4321" in masked
-        assert "XXX" in masked
-    
-    def test_mask_landline_default(self):
-        phone = "(21) 3456-7890"
-        masked = self.detector.mask(phone, level='default')
-        
-        assert "7890" in masked
-        assert "XXX" in masked
-    
-    def test_mask_cellphone_high_level(self):
-        phone = "(21) 98765-4321"
-        masked = self.detector.mask(phone, level='high')
-        
-        assert "XXXX" in masked
-        assert "4321" not in masked
-    
-    def test_mask_preserves_parentheses_format(self):
-        phone = "(21) 98765-4321"
-        masked = self.detector.mask(phone)
-        
-        assert "(" in masked
-        assert ")" in masked
-        assert "-" in masked
-    
-    def test_mask_preserves_no_parentheses_format(self):
-        phone = "21987654321"
-        masked = self.detector.mask(phone)
-        
-        assert "(" not in masked
-        assert ")" not in masked
-        assert "-" not in masked
-    
-    def test_mask_with_country_code(self):
-        phone = "+55 (21) 98765-4321"
-        masked = self.detector.mask(phone)
-        
-        assert "+55" in masked
-        assert "4321" in masked
-    
-    def test_mask_minimum_level(self):
-        phone = "(21) 98765-4321"
-        masked = self.detector.mask(phone, level='default')
-        
-        assert "(21)" in masked
-        assert "4321" in masked
-
-    def test_detect_phone_separated_by_slash(self):
-        text = "Telefones: 21987654321/21876543210"
-        results = self.detector.detect(text)
-        assert len(results) == 2
-
-    def test_detect_phone_formatted_separated_by_slash(self):
-        text = "Fone: (21) 98765-4321/(21) 87654-3210"
-        results = self.detector.detect(text)
-        assert len(results) == 2
-
-    def test_detect_phone_with_slash_and_spaces(self):
-        text = "Tel: 21987654321 / 21876543210"
-        results = self.detector.detect(text)
-
-        assert len(results) == 2
-
-    def test_detect_phone_separated_by_pipe(self):
-        text = "Telefones: 21987654321|21876543210"
-        results = self.detector.detect(text)
-
-        assert len(results) == 2
-
-    def test_detect_phone_separated_by_pipe_and_spaces(self):
-        text = "Telefones: 21987654321 | 21876543210"
-        results = self.detector.detect(text)
-
-        assert len(results) == 2
-
-    def test_detect_ninth_digit_separated(self):
-        text = "Celular: (21) 9 9876-5432"
-        results = self.detector.detect(text)
-
-        assert len(results) == 1
-        assert results[0][0] == "(21) 9 9876-5432"
-
-    def test_no_detect_sequence_longer_than_phone(self):
-        text = "Código: 219876543210000"
-        results = self.detector.detect(text)
-        assert len(results) == 0
-
-    def test_no_detect_unformatted_phone_adjacent_to_digits(self):
-        text = "ID: 121987654321"
-        results = self.detector.detect(text)
-        assert len(results) == 0
+@pytest.mark.parametrize("text_input, expected", _build_detect_cases())
+def test_detect(detector, text_input, expected):
+    """Testa detecção usando os casos definidos no YAML."""
+    results = detector.detect(text_input)
+    found_texts = [r[0] for r in results]
+    assert found_texts == expected
 
 
-class TestPhoneHelpers:
+# Testes de mascaramento parametrizados pelo YAML
+def _build_mask_cases():
+    """Monta lista de (value, level, expected) a partir do YAML."""
+    cases = []
+    for mc in DETECTOR_CONFIG.get("mask_cases", []):
+        cases.append(
+            pytest.param(
+                mc["input"],
+                mc["level"],
+                mc["expected"],
+                id=f"{mc['level']}_{mc.get('description', 'case')}"
+            )
+        )
+    return cases
 
-    def test_helper_detect_phone_separated_by_pipe(self):
-        text = "Fones: 21987654321|21876543210"
-        results = detect_phone(text)
-        assert len(results) == 2
 
-    def test_detect_phone_separated_by_pipe_and_spaces(self):
-        text = "Telefones: 21987654321 | 21876543210"
-        results = detect_phone(text)
-        
-        assert len(results) == 2
+@pytest.mark.parametrize("value, level, expected", _build_mask_cases())
+def test_mask(detector, value, level, expected):
+    """Testa mascaramento usando os casos definidos no YAML."""
+    result = detector.mask(value, level=level)
+    assert result == expected
 
-    def test_helper_detect_ninth_digit_separated(self):
-        text = "Cel: (21) 9 9876-5432"
-        results = detect_phone(text)
-        
-        assert len(results) == 1
 
-    def test_helper_detect_phone_separated_by_slash(self):
-        text = "Fones: 21987654321/21876543210"
-        results = detect_phone(text)
-        
-        assert len(results) == 2
+# Testes de helpers
+def test_helper_detect():
+    """Testa a função helper de detecção."""
+    # Usa o primeiro test_case do primeiro padrão como teste básico
+    first_case = DETECTOR_CONFIG["patterns"][0]["test_cases"][0]
+    results = detect_phone(first_case["input"])
+    found_texts = [r[0] for r in results]
+    assert found_texts == first_case["expected"]
 
-    def test_helper_detect_phone(self):
-        text = "Telefone: (21) 98765-4321"
-        results = detect_phone(text)
-        
-        assert len(results) == 1
-    
-    def test_helper_mask_phone(self):
-        phone = "(21) 98765-4321"
-        masked = mask_phone(phone)
-        
-        assert "4321" in masked
-        assert "XXX" in masked
-    
-    def test_helper_mask_phone_high_level(self):
-        phone = "(21) 98765-4321"
-        masked = mask_phone(phone, level='high')
 
-        assert "4321" not in masked
-
-    def test_helper_no_detect_sequence_longer_than_phone(self):
-        text = "Código: 219876543210000"
-        results = detect_phone(text)
-        assert len(results) == 0
-
-    def test_helper_no_detect_unformatted_phone_adjacent_to_digits(self):
-        text = "ID: 121987654321"
-        results = detect_phone(text)
-        assert len(results) == 0
+def test_helper_mask():
+    """Testa a função helper de mascaramento."""
+    first_case = DETECTOR_CONFIG["mask_cases"][0]
+    result = mask_phone(first_case["input"], level=first_case["level"])
+    assert result == first_case["expected"]
