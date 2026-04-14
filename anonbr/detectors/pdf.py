@@ -22,6 +22,7 @@ Fonte dos padrões regex: config/patterns.yaml -> via pattern_loader
 
 import re
 import os
+import bisect
 import fitz
 import pdfplumber
 
@@ -203,8 +204,9 @@ class PDFDetector:
                 fim - índice de fim no texto
         """
         detections = []
-        # Conjunto de posições já ocupadas para evitar sobreposição entre padrões
-        used_positions = set()
+        # Intervalos já ocupados como lista ordenada de (start, end).
+        # Busca e inserção são O(log n), evitando iterar cada posição do match.
+        used_intervals: list = []
 
         # Ordem de aplicação: do mais específico ao mais genérico
         pattern_order = [
@@ -224,14 +226,14 @@ class PDFDetector:
             for match in regex.finditer(text):
                 start, end = match.start(), match.end()
 
-                # Pula se qualquer posição do match já foi usada
-                if any(pos in used_positions for pos in range(start, end)):
+                # Pula se o intervalo sobrepõe algum já registrado (O(log n))
+                idx = bisect.bisect_left(used_intervals, (start,))
+                if (idx > 0 and used_intervals[idx - 1][1] > start) or \
+                   (idx < len(used_intervals) and used_intervals[idx][0] < end):
                     continue
 
                 detections.append((data_type, match.group(), start, end))
-                # Marca todas as posições do match como usadas
-                for pos in range(start, end):
-                    used_positions.add(pos)
+                bisect.insort(used_intervals, (start, end))
 
         # Segunda varredura: telefones separados por '/'
         # Ex.: '21987654321/21876543210' — a barra pode quebrar o lookbehind (?<!\d)
@@ -251,13 +253,14 @@ class PDFDetector:
                     original_start = offset + match.start()
                     original_end   = offset + match.end()
 
-                    # Pula posições já detectadas
-                    if any(pos in used_positions for pos in range(original_start, original_end)):
+                    # Pula intervalos já detectados (O(log n))
+                    idx = bisect.bisect_left(used_intervals, (original_start,))
+                    if (idx > 0 and used_intervals[idx - 1][1] > original_start) or \
+                       (idx < len(used_intervals) and used_intervals[idx][0] < original_end):
                         continue
 
                     detections.append(('phone', match.group(), original_start, original_end))
-                    for pos in range(original_start, original_end):
-                        used_positions.add(pos)
+                    bisect.insort(used_intervals, (original_start, original_end))
 
             # Avança offset: comprimento da parte + 1 (pelo '/' que foi removido)
             offset += len(part) + 1
@@ -379,7 +382,7 @@ class PDFDetector:
                 for rect in rects:
                     char_width = rect[2] - rect[0]
                     if (page_bars
-                            and abs(rect[1] - page_bars[-1]['top']) < 1
+                            and abs(rect[1] - page_bars[-1]['top']) < 2
                             and (rect[0] - page_bars[-1]['x1']) < char_width):
                         # Estende a última barra até o fim do caractere atual
                         page_bars[-1]['x1'] = rect[2]
