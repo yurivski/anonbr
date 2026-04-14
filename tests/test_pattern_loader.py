@@ -8,7 +8,6 @@ Verifica que:
   4. get_compiled_by_name() retorna os nomes corretos como chaves.
   5. Os padrões compilados realmente detectam os textos esperados.
   6. O cache (lru_cache) funciona, um segundo call não relê o arquivo.
-  7. A notação r'...' do YAML é removida corretamente antes da compilação.
 """
 
 import re
@@ -19,7 +18,6 @@ from anonbr.pattern_loader import (
     get_patterns,
     get_compiled,
     get_compiled_by_name,
-    _strip_python_raw,
     PATTERNS_FILE,
 )
 
@@ -58,22 +56,7 @@ class TestLoadRaw:
         assert primeiro is segundo, "load_raw deveria retornar objeto cacheado"
 
 
-# Testes de _strip_python_raw
-class TestStripPythonRaw:
-    def test_remove_aspas_simples(self):
-        assert _strip_python_raw(r"r'\d{3}'") == r'\d{3}'
-
-    def test_remove_aspas_duplas(self):
-        assert _strip_python_raw('r"\\d{3}"') == '\\d{3}'
-
-    def test_string_sem_notacao_r_intacta(self):
-        assert _strip_python_raw(r'\d{3}') == r'\d{3}'
-
-    def test_whitespace_ao_redor_e_removido(self):
-        assert _strip_python_raw("  r'\\d+'  ") == '\\d+'
-
-
-# Testes de get_patterns 
+# Testes de get_patterns
 class TestGetPatterns:
     def test_cpf_tem_dois_padroes(self):
         """CPF deve ter exatamente os padrões 'formatted' e 'unformatted'."""

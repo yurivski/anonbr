@@ -50,31 +50,6 @@ def load_raw() -> dict:
         return yaml.safe_load(f)
 
 
-# Utilitário interno 
-
-def _strip_python_raw(raw_str: str) -> str:
-    """
-    Remove a notação de raw string do Python (r'...') caso presente no YAML.
-
-    O YAML não tem conceito de raw string, quando você escreve:
-        regex: r'\\d{3}'
-    o PyYAML carrega a string literal "r'\\d{3}'". Esta função extrai apenas
-    o conteúdo interno (o padrão regex de fato).
-
-    Parâmetro:
-        raw_str - string lida diretamente do YAML.
-
-    Retorna:
-        O padrão regex puro, sem os delimitadores r'...' ou r"...".
-    """
-    s = raw_str.strip()
-    # Aceita tanto aspas simples quanto duplas: r'...' ou r"..."
-    if (s.startswith("r'") and s.endswith("'")) or \
-       (s.startswith('r"') and s.endswith('"')):
-        return s[2:-1]
-    return s
-
-
 # API pública
 def get_patterns(key: str) -> list:
     """
@@ -83,7 +58,7 @@ def get_patterns(key: str) -> list:
     Cada elemento da lista tem a forma:
         {
             'name': str - identificador único do padrão (ex.: 'formatted'),
-            'regex': str - string regex com notação r'...',
+            'regex': str - string regex,
             'description': str - descrição legível,
             'is_formatted': bool - (CPF/CNPJ) indica se tem separadores, [opcional]
             'test_cases': list - casos de teste documentados, [opcional]
@@ -110,7 +85,7 @@ def get_compiled(key: str) -> list:
         [re.Pattern, re.Pattern, ...]
     """
     return [
-        re.compile(_strip_python_raw(p['regex']))
+        re.compile(p['regex'])
         for p in get_patterns(key)
     ]
 
@@ -131,6 +106,6 @@ def get_compiled_by_name(key: str) -> dict:
         {'nome_padrao': re.Pattern, ...}
     """
     return {
-        p['name']: re.compile(_strip_python_raw(p['regex']))
+        p['name']: re.compile(p['regex'])
         for p in get_patterns(key)
     }
