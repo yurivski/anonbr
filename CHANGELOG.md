@@ -24,11 +24,18 @@ Extração dos padrões regex para um YAML centralizado, refatoração de todos 
 </thead>
 <tbody>
 <tr>
+<td>2026-04-14</td>
+<td>v0.4.1</td>
+<td>refact</td>
+<td>Remover suporte à notação <code>r'...'</code> no YAML</td>
+<td>Remover a função <code>_strip_python_raw</code> do <code>pattern_loader</code> e a classe <code>TestStripPythonRaw</code> de <code>test_pattern_loader</code>, pois os padrões regex no <code>config/patterns.yaml</code> já não usam a notação <code>r'...'</code>; <code>get_compiled</code> e <code>get_compiled_by_name</code> passam o campo <code>regex</code> diretamente para <code>re.compile()</code>.</td>
+</tr>
+<tr>
 <td>2026-04-11</td>
 <td>v0.4.0</td>
 <td>feat/refact</td>
 <td>Centralizar padrões regex, refatorar detectores e criar suite de testes</td>
-<td>Adicionar <code>pattern_loader</code> como ponto central de leitura do <code>config/patterns.yaml</code>; adicionar carregadores de padrão com acesso direto por nome ao YAML; refatorar todos os detectores para importar padrões via <code>pattern_loader</code>, removendo strings regex hardcoded do código; adicionar comentários detalhados em todas as funções dos detectores; documentar nos detectores a fonte dos padrões carregados; criar <code>test_pattern_loader</code> com 37 testes organizados em 6 classes, cobrindo estrutura do YAML, remoção da notação <code>r'...'</code>, ordem dos padrões, nomes corretos e detecção funcional.</td>
+<td>Adicionar <code>pattern_loader</code> como ponto central de leitura do <code>config/patterns.yaml</code>; adicionar carregadores de padrão com acesso direto por nome ao YAML; refatorar todos os detectores para importar padrões via <code>pattern_loader</code>, removendo strings regex hardcoded do código; adicionar comentários detalhados em todas as funções dos detectores; documentar nos detectores a fonte dos padrões carregados; criar <code>test_pattern_loader</code> com testes organizados em classes, cobrindo estrutura do YAML, ordem dos padrões, nomes corretos e detecção funcional.</td>
 </tr>
 </tbody>
 </table>
