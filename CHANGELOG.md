@@ -25,6 +25,13 @@ Extração dos padrões regex para um YAML centralizado, refatoração de todos 
 <tbody>
 <tr>
 <td>2026-04-14</td>
+<td>v0.4.2</td>
+<td>perf/fix</td>
+<td>Otimizar deduplicação de matches e corrigir fusão de barras no PDF</td>
+<td>Substituir o <code>set</code> de posições individuais (<code>used_positions</code>) por lista ordenada de intervalos (<code>used_intervals</code>) com busca binária via <code>bisect</code> em <code>_detect_in_text</code>: verificação de sobreposição passa de O(comprimento do match) para O(log n) em ambas as varreduras; corrigir tolerância de fusão de bounding boxes adjacentes em <code>_build_mask_map</code> de <code>&lt; 1</code> para <code>&lt; 2</code> pontos, evitando fragmentação de barras de redação na mesma linha em PDFs com variação de <code>top</code> por fonte.</td>
+</tr>
+<tr>
+<td>2026-04-14</td>
 <td>v0.4.1</td>
 <td>refact</td>
 <td>Remover suporte à notação <code>r'...'</code> no YAML</td>

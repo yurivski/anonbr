@@ -102,16 +102,13 @@ Cada chave tem uma lista `patterns`. Cada item da lista tem:
 
 ```yaml
 - name: nome_do_padrao        # identificador único, usado pelo código
-  regex: r'sua_expressao'     # expressão regular no formato r'...'
+  regex: 'sua_expressao'      # expressão regular como string YAML simples
   description: descrição      # texto legível explicando o padrão
 ```
 
 **2. Adicione seu padrão ao final da lista, respeitando a ordem de prioridade.**
 
 Os padrões são carregados na ordem em que aparecem no YAML. Padrões mais específicos devem vir antes dos mais genéricos para que a deduplicação por posição funcione corretamente.
-
-> [!IMPORTANT]
-> Use sempre a notação `r'...'` na chave `regex`. O `pattern_loader` remove automaticamente esse prefixo antes de compilar, mas ele precisa estar presente no YAML.
 
 **3. Verifique se o detector existente consegue usar o novo padrão sem alteração.**
 
@@ -133,10 +130,10 @@ rg:
   priority: 4
   patterns:
     - name: formatted
-      regex: r'seu_regex_aqui'
+      regex: 'seu_regex_aqui'
       description: "RG formatado com ponto e traço"
     - name: unformatted
-      regex: r'outro_regex'
+      regex: 'outro_regex'
       description: "RG apenas com dígitos"
 ```
 
