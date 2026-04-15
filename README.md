@@ -1,31 +1,29 @@
-<h1><img src="images/Anonbr_icon.png" alt="Anonbr logo" width="50" align="absmiddle">&nbsp;&nbsp;Anonbr</h1>
+<div align="center">
 
-![Banner](images/Anonbr_banner.png)
+<img src="images/Anonbr_icon.png" alt="Anonbr logo" width="130" align="absmiddle">&nbsp;&nbsp;
+
+# Anonbr
 
 [![Tests](https://github.com/yurivski/anonbr/actions/workflows/tests.yml/badge.svg)](https://github.com/yurivski/anonbr/actions/workflows/tests.yml)
 ![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
 ![License](https://img.shields.io/badge/license-AGPL--3.0-blue.svg)
 
-Biblioteca Python para detectar e mascarar dados pessoais sensíveis em DataFrames.
+Ferramenta Python para [censurar dados sensíveis em arquivos](#funcionalidades---resumo).  
 
-Este projeto nasceu após eu identificar em alguns posts do LinkedIn em que devs e analistas ficam P* da vida com DBAs (ou quem quer que seja) que não liberam acesso ao banco de dados para o desenvolvimento ou testes. Identifica automaticamente [dados sensíveis em arquivos](#funcionalidades---resumo) e aplica mascaramento com [três níveis de privacidade.](#níveis-de-mascaramento)  
+Identifica automaticamente os dados, destrói permanentemente a informação original e substitui os caracteres destruídos com 'X' ou 'tarjas' dependendo do tipo do arquivo, preservando a estrutura original. A quantidade de caracteres revelados dependem de [três níveis de privacidade](/OUTPUT_EXEMPLE.md). 
+
+</div>
 
 > [!NOTE]
-> [**Contribua sem comprimisso**](/CONTRIBUTING.md), vamos escrever códigos bugados e desbugar **em prol do desenvolvimento pessoal e profissional.** Sintam-se livres para contribuir implementando novas funcionalidades, relatando erros ou sugestões. 
+> [**Contribua sem comprimisso**](/CONTRIBUTING.md), vamos escrever códigos bugados e debugar **em prol do desenvolvimento pessoal e profissional.** Sintam-se livres para contribuir implementando novas funcionalidades, relatando erros ou sugestões.  
 
 *Leia o [**CONTRIBUTING.md**](/CONTRIBUTING.md) para mais detalhes.*
 
-## Introdução
+<br>
 
-Projeto de ferramenta para detecção e mascaramento de dados sensíveis em arquivos CSV e PDF, para o compartilhamento seguro conforme a **LGPD** (Lei Geral de Proteção de Dados) e no **tratamento de dados pessoais no contexto brasileiro**.  
-
-A versão atual centraliza todos os padrões regex num único arquivo de configuração, o `config/patterns.yaml`, carregado pelo módulo `pattern_loader`. Isso significa que nenhum detector guarda strings de regex no próprio código: todos importam do mesmo lugar, facilitando ajustes e a adição de novos padrões sem precisar editar múltiplos arquivos. Se você quiser contribuir com um novo padrão ou variação de um padrão existente, esse é o único arquivo que precisa ser modificado para a parte de detecção. Veja mais no [CONTRIBUTING.md](/CONTRIBUTING.md).
+A versão atual centraliza todos os padrões regex num único arquivo de configuração, o `config/patterns.yaml`, carregado pelo módulo `pattern_loader`. Isso significa que nenhum detector guarda strings de regex no próprio código: todos importam do mesmo lugar, facilitando ajustes e a adição de novos padrões sem precisar editar múltiplos arquivos. Se você quiser contribuir com um novo padrão ou variação de um padrão existente, esse é o único arquivo que precisa ser modificado para a parte de detecção.
 
 ***Todos os dados sensíveis expostos neste repositório são fictícios, gerados por IA como ilustração para exibição de testes.***
-
-### CLIQUE AQUI
-- [**EXEMPLOS DE OUTPUTS EM CADA NÍVEL DE CENSURA**](/OUTPUT_EXEMPLE.md)   
-- [**HISTÓRICO DE ATUALIZAÇÕES E VERSÕES**](/UPDATES.md)
 
 
 ## SUMÁRIO  
@@ -45,11 +43,16 @@ A versão atual centraliza todos os padrões regex num único arquivo de configu
 
 Censura dados sensíveis em arquivos CSV e PDF sem quebrar a estrutura do arquivo, com três níveis de formatação: **default, high, low**. Exemplos de dados alvos da ferramenta atualmente e extensões disponíveis, mascaradas em formato **DEFAULT**:
 
+<div align="center">
+
 | Extensão | CPF | E-Mail | Telefone | CNPJ | Nome | CEP | Rua | Cidade | Estado | UF | Endereço completo |
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 | **CSV** | ✔ | ✔ | ✔ | ✔ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ |
 | **PDF** | ✔ | ✔ | ✔ | ✔ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ |
 
+</div>
+
+<br>
 
 ### Exemplo de mascaramento padrão:
 |Extensão|CPF|E-Mail|Telefone|CNPJ|
@@ -57,6 +60,7 @@ Censura dados sensíveis em arquivos CSV e PDF sem quebrar a estrutura do arquiv
 | **CSV** | XXX.096.XXX-XX | bxxxxxxxxx@empresa.com |(21) XXXXX-4321| XX.765.432/XXXX-XX
 | **PDF** | ███.096.███-██ | b█████████@empresa.com |(21) █████-4321| ██.765.432/████-██
 
+<br>
 
 ## Arquitetura do projeto  
 
@@ -65,27 +69,26 @@ Censura dados sensíveis em arquivos CSV e PDF sem quebrar a estrutura do arquiv
 
 ## Como funciona a detecção
 
-A detecção é baseada em padrões visuais (regex), sem validação matemática. Isso garante que qualquer dado que pareça um CPF, email ou telefone será detectado e mascarado.
+A detecção é baseada em padrões visuais (regex), sem validação matemática. Isso garante que qualquer dado que pareça um CPF, email, telefone ou outros será detectado e mascarado. Exemplo:
 
 
-### CPF
+### [CPF](config/patterns.yaml?plain1#L1)
 
 O detector busca dois formatos: formatado (com pontos e hífen) e apenas números.
 
-![lógica do cpf](images/logica_cpf.png)
-
-> **Padrões que o detector reconhece:** **Formatado:** 123.456.789-00  *(3 dígitos, ponto, 3 dígitos, ponto, 3 dígitos, hífen, 2 dígitos)* **Não formatado:** 12345678900 *(11 dígitos seguidos)*
+>**Padrões que o detector reconhece:**  
+**Formatado:** 123.456.789-00  *(3 dígitos, ponto, 3 dígitos, ponto, 3 dígitos, hífen, 2 dígitos)*   
+**Não formatado:** 12345678900 *(11 dígitos seguidos)*
 
 
 Quando o texto tem um CPF formatado como `375.096.646-08`, os dois padrões poderiam encontrar o mesmo número (um com pontuação, outro só os dígitos). Para evitar duplicatas, o método `_sobrepoe_formatado` verifica se as posições do match já foram cobertas por um CPF formatado encontrado antes.
 
 
-### Email
+### [Email](config/patterns.yaml?plain1#L69)
 
 O detector busca o padrão clássico de email: caracteres antes do `@`, seguidos
 de um domínio com pelo menos um ponto.
 
-![lógica do email](images/logica_email.png)
 
 > **Padrões que o detector reconhece:**  
 usuario@dominio.com  
@@ -95,11 +98,10 @@ usuario123@servidor.net
 O regex exige: pelo menos um caractere antes do `@`, pelo menos um ponto no domínio, e pelo menos duas letras na extensão (`.com`, `.br`, `.net`). Textos sem `@` são ignorados, pois não representam emails.
 
 
-### Telefone
+### [Telefone](config/patterns.yaml?plain1#L94)
 
 O detector cobre os formatos brasileiros mais comuns, do mais específico para o mais genérico.
 
-![lógica do telefone](images/logica_telefone.png)
 
 > **Padrões que o detector reconhece (em ordem de prioridade):**  
 **1. Internacional:** +55 (21) 98765-4321, +55 21 987654321  
@@ -124,21 +126,12 @@ O mascaramento segue três etapas em todos os detectores:
 
 Isso garante que o dado mascarado mantém a mesma estrutura visual do original. Por exemplo, um CPF formatado sai formatado, e um CPF sem pontuação sai sem pontuação.  
 
-**Edite o nível de mascaramento entre: `default`, `high` ou `low`:**
-
-```python
-# Altere o nível do mascaramento conforme a prioridade:
-anonymizer = Anonymizer(level='default')
-```
-
-![Nível de mascaramento](images/nivel_mascaramento.png)  
-
-
 ## Caso de Uso
 
 Você é DBA ou quem quer que seja e recebe pedidos constantes de acesso ao banco para desenvolvimento ou teste. Não pode autorizar acesso direto (dados sensíveis em produção), mas a equipe precisa dos dados numa quantidade real para desenvolver ou testar alguma funcionalidade de algo projeto ou ferramenta.
 
-Fazer exports manuais e editar cada campo sensível em Excel consome horas e é propenso a erros. O Anonbr automatiza esse processo: você exporta o arquivo para a [**extenção disponível**](#funcionalidades---resumo), executa a ferramenta (CPF: de 123.456.789-09 para XXX.XXX.789-XX, Email: de bruno@email.com para bxxx@email.com, **para PDFs usa tarjas pretas**) e compartilha o arquivo com segurança. A equipe trabalha com dados reais sem expor informações pessoais.
+Fazer exports manuais e editar cada campo sensível em Excel consome horas e é propenso a erros. O Anonbr automatiza esse processo: você exporta o arquivo para a [extensão disponível](#funcionalidades---resumo), executa a ferramenta (CPF: de 123.456.789-09 para XXX.XXX.789-XX, Email: de bruno@email.com para bxxx@email.com, **para PDFs usa tarjas pretas**) e compartilha o arquivo com segurança. A equipe ou quem quer que seja trabalha com dados reais sem expor informações pessoais.
+
 
 
 ## Configuração do ambiente

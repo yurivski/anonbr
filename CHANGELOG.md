@@ -1,12 +1,12 @@
 <div align="center">
 
-# Changelog - Anonbr
+![Banner](images/Anonbr_banner.png)
 
+# Changelog - Anonbr
 Histórico de versões do anonbr.
 
 </div>
-
----
+<br>
 
 ## v0.4.0 — Centralização de padrões regex
 
