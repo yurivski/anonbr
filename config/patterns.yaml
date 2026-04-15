@@ -1,4 +1,6 @@
 cpf:
+  # Padrão com dois formatos: formatado (com pontos e hífen) e apenas números.
+  # 123.456.789-00 (3 dígitos, ponto, 3 dígitos, ponto, 3 dígitos, hífen, 2 dígitos), não formatado: 12345678900 (11 dígitos seguidos)
   description: "Detecção de CPF brasileiro (formatado e não formatado)"
   priority: 10
   patterns:
@@ -33,6 +35,7 @@ cpf:
       expected: "XXX.XXX.646-08"
 
 cnpj:
+  # Padrão parecido com o do CPF
   description: "Detecção de CNPJ brasileiro"
   priority: 15
   patterns:
@@ -92,6 +95,8 @@ email:
       expected: "xxxxato@empresa.com.br"
 
 telefone:
+  # Sistema improvisado de redundância, cobrindo vários padrões diferentes de escrita de telefone
+  # Improviso pra cobrir as formas diferentes de escrita em documentos mais antigos digitalizados em PDF
   description: "Detecção de telefone brasileiro (vários formatos)"
   priority: 30
   patterns:
