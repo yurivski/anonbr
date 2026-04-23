@@ -19,18 +19,24 @@ class Anonymizer:
     Detecta automaticamente CPF, email e telefone em colunas e aplica
     mascaramento preservando formato original.
     """
-    def __init__(self, level='default', sample_size=5):
+    def __init__(self, level='default', sample_size=5, data_types=None):
         """
         Inicializa anonimizador com detectores.
         nivel: Nível de mascaramento ('default', 'high', 'low')
+        data_types: Lista de tipos a processar ('cpf', 'email', 'phone').
+                    None = todos os tipos.
         """
         self.level = level
         self.sample_size = sample_size
-        self.cpf_detector = CPFDetector()
-        self.cnpj_detector = CNPJDetector()
-        self.email_detector = EmailDetector()
-        self.phone_detector = PhoneDetector()
-    
+        # None = sem filtro, processa tudo; lista = só os tipos informados
+        self.data_types = data_types
+
+        # Inicializa apenas os detectores dos tipos solicitados
+        self.cpf_detector   = CPFDetector()   if (data_types is None or 'cpf'   in data_types) else None
+        self.cnpj_detector  = CNPJDetector()  if (data_types is None or 'cnpj'  in data_types) else None
+        self.email_detector = EmailDetector() if (data_types is None or 'email' in data_types) else None
+        self.phone_detector = PhoneDetector() if (data_types is None or 'phone' in data_types) else None
+
     def _detect_column_type(self, series):
         """
         Detecta tipo de dado sensível na coluna por votação de amostra.
@@ -46,12 +52,16 @@ class Anonymizer:
         if not samples:
             return None
 
-        detectors = {
-            'cpf':   self.cpf_detector.detect,
-            'cnpj':  self.cnpj_detector.detect,
-            'email': self.email_detector.detect,
-            'phone': self.phone_detector.detect,
-        }
+        # Monta só os detectores ativos (os que não são None)
+        detectors = {}
+        if self.cpf_detector:
+            detectors['cpf'] = self.cpf_detector.detect
+        if self.cnpj_detector:
+            detectors['cnpj'] = self.cnpj_detector.detect
+        if self.email_detector:
+            detectors['email'] = self.email_detector.detect
+        if self.phone_detector:
+            detectors['phone'] = self.phone_detector.detect
 
         votes = {dtype: 0 for dtype in detectors}
 
@@ -64,14 +74,14 @@ class Anonymizer:
         best_type, best_count = max(votes.items(), key=lambda x: x[1])
 
         return best_type if best_count > 0 else None
-    
+
     def _mask_value(self, value, data_type):
         # Mascara valor individual baseado no tipo. Retorna o valor mascarado ou original se inválido
         if pd.isna(value):
             return value
-        
+
         value_str = str(value)
-        
+
         try:
             if data_type == 'cpf':
                 return self.cpf_detector.mask(value_str, level=self.level)
@@ -91,7 +101,7 @@ class Anonymizer:
             return value
 
         return value
-    
+
     def anonymize(self, df, columns=None, inplace=False):
         """
         Anonimiza DataFrame detectando e mascarando dados sensíveis.
@@ -100,37 +110,42 @@ class Anonymizer:
         """
         if not inplace:
             df = df.copy()
-        
+
         columns_to_process = columns if columns else df.columns
-        
+
         for column in columns_to_process:
             if column not in df.columns:
                 continue
-            
+
             data_type = self._detect_column_type(df[column])
-            
+
             if data_type:
                 df[column] = df[column].apply(
                     lambda x: self._mask_value(x, data_type)
                 )
-        
+
         return df
-    
+
     def report(self, df):
         """
         Gera relatório de colunas com dados sensíveis detectados.
-        Retorna Dict com informações das colunas detectadas
+        Retorna Dict com informações das colunas detectadas.
+        Só inclui os tipos que têm detector ativo.
         """
-        result = {
-            'cpf': [],
-            'cnpj': [],
-            'email': [],
-            'phone': []
-        }
-        
+        # Monta o resultado só com os tipos que têm detector inicializado
+        result = {}
+        if self.cpf_detector:
+            result['cpf'] = []
+        if self.cnpj_detector:
+            result['cnpj'] = []
+        if self.email_detector:
+            result['email'] = []
+        if self.phone_detector:
+            result['phone'] = []
+
         for column in df.columns:
             data_type = self._detect_column_type(df[column])
-            if data_type:
+            if data_type and data_type in result:
                 result[data_type].append(column)
-        
+
         return result

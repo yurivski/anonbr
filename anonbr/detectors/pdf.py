@@ -43,8 +43,10 @@ class PDFDetector:
                  nas funções _*_mask_pattern.
     """
 
-    def __init__(self, level: str = 'default'):
+    def __init__(self, level: str = 'default', data_types=None):
         self.level = level
+        # None = todos os tipos; lista = filtra os padrões e a detecção
+        self.data_types = data_types
 
     @property
     def patterns(self) -> dict:
@@ -65,29 +67,35 @@ class PDFDetector:
         Retorna:
             dict {chave_interna: re.Pattern}
         """
-        # Carrega os padrões de cada detector indexados pelo campo 'name' do YAML
-        cpf = get_compiled_by_name('cpf')
-        cnpj = get_compiled_by_name('cnpj')
-        email = get_compiled_by_name('email')
-        phone = get_compiled_by_name('telefone')
+        # Só carrega os padrões dos tipos que estão ativos
+        active = self.data_types
+        result = {}
 
-        return {
+        if active is None or 'cpf' in active:
+            cpf = get_compiled_by_name('cpf')
             # CPF: formatado tem prioridade sobre não formatado
-            'cpf_formatted': cpf['formatted'],
-            'cpf_unformatted': cpf['unformatted'],
+            result['cpf_formatted']   = cpf['formatted']
+            result['cpf_unformatted'] = cpf['unformatted']
 
+        if active is None or 'cnpj' in active:
+            cnpj = get_compiled_by_name('cnpj')
             # CNPJ: formatado tem prioridade sobre não formatado
-            'cnpj_formatted': cnpj['formatted'],
-            'cnpj_unformatted': cnpj['unformatted'],
+            result['cnpj_formatted']   = cnpj['formatted']
+            result['cnpj_unformatted'] = cnpj['unformatted']
 
+        if active is None or 'email' in active:
+            email = get_compiled_by_name('email')
             # E-mail: padrão único
-            'email': re.compile(email['standard'].pattern, re.IGNORECASE),
+            result['email'] = re.compile(email['standard'].pattern, re.IGNORECASE)
 
+        if active is None or 'phone' in active:
+            phone = get_compiled_by_name('telefone')
             # Telefone: do mais específico ao mais genérico
-            'phone_international': phone['international'],
-            'phone_ddd_mobile': phone['with_nono_digit_space'],
-            'phone_ddd_landline': phone['with_ddd'],
-        }
+            result['phone_international'] = phone['international']
+            result['phone_ddd_mobile']    = phone['with_nono_digit_space']
+            result['phone_ddd_landline']  = phone['with_ddd']
+
+        return result
 
     # Extração de texto
     def _extract_text_with_mapping(self, chars: list) -> tuple:
@@ -208,20 +216,27 @@ class PDFDetector:
         # Busca e inserção são O(log n), evitando iterar cada posição do match.
         used_intervals: list = []
 
-        # Ordem de aplicação: do mais específico ao mais genérico
-        pattern_order = [
-            ('cpf', 'cpf_formatted'),
-            ('cpf', 'cpf_unformatted'),
-            ('cnpj', 'cnpj_formatted'),
-            ('cnpj', 'cnpj_unformatted'),
+        # Carrega os padrões ativos uma vez (a property já filtra por data_types)
+        active_patterns = self.patterns
+
+        # Ordem de aplicação completa — do mais específico ao mais genérico.
+        # Só inclui as entradas cujo padrão existe no dict ativo (filtrado por data_types).
+        full_pattern_order = [
+            ('cpf',   'cpf_formatted'),
+            ('cpf',   'cpf_unformatted'),
+            ('cnpj',  'cnpj_formatted'),
+            ('cnpj',  'cnpj_unformatted'),
             ('email', 'email'),
             ('phone', 'phone_international'),
             ('phone', 'phone_ddd_mobile'),
             ('phone', 'phone_ddd_landline'),
         ]
+        pattern_order = [
+            (dt, pn) for dt, pn in full_pattern_order if pn in active_patterns
+        ]
 
         for data_type, pattern_name in pattern_order:
-            regex = self.patterns[pattern_name]
+            regex = active_patterns[pattern_name]
 
             for match in regex.finditer(text):
                 start, end = match.start(), match.end()
@@ -238,32 +253,34 @@ class PDFDetector:
         # Segunda varredura: telefones separados por '/'
         # Ex.: '21987654321/21876543210' — a barra pode quebrar o lookbehind (?<!\d)
         # e o segundo número não ser detectado na varredura anterior.
-        phone_patterns = [
-            self.patterns['phone_international'],
-            self.patterns['phone_ddd_mobile'],
-            self.patterns['phone_ddd_landline'],
-        ]
+        # Só roda se 'phone' está nos tipos ativos.
+        if 'phone_international' in active_patterns:
+            phone_patterns = [
+                active_patterns['phone_international'],
+                active_patterns['phone_ddd_mobile'],
+                active_patterns['phone_ddd_landline'],
+            ]
 
-        parts = text.split('/')
-        offset = 0
+            parts = text.split('/')
+            offset = 0
 
-        for part in parts:
-            for regex in phone_patterns:
-                for match in regex.finditer(part):
-                    original_start = offset + match.start()
-                    original_end   = offset + match.end()
+            for part in parts:
+                for regex in phone_patterns:
+                    for match in regex.finditer(part):
+                        original_start = offset + match.start()
+                        original_end   = offset + match.end()
 
-                    # Pula intervalos já detectados (O(log n))
-                    idx = bisect.bisect_left(used_intervals, (original_start,))
-                    if (idx > 0 and used_intervals[idx - 1][1] > original_start) or \
-                       (idx < len(used_intervals) and used_intervals[idx][0] < original_end):
-                        continue
+                        # Pula intervalos já detectados (O(log n))
+                        idx = bisect.bisect_left(used_intervals, (original_start,))
+                        if (idx > 0 and used_intervals[idx - 1][1] > original_start) or \
+                           (idx < len(used_intervals) and used_intervals[idx][0] < original_end):
+                            continue
 
-                    detections.append(('phone', match.group(), original_start, original_end))
-                    bisect.insort(used_intervals, (original_start, original_end))
+                        detections.append(('phone', match.group(), original_start, original_end))
+                        bisect.insort(used_intervals, (original_start, original_end))
 
-            # Avança offset: comprimento da parte + 1 (pelo '/' que foi removido)
-            offset += len(part) + 1
+                # Avança offset: comprimento da parte + 1 (pelo '/' que foi removido)
+                offset += len(part) + 1
 
         return detections
 
