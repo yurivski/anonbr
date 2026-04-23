@@ -164,15 +164,21 @@ A lista de comandos irá aparecer no terminal caso execute o arquivo sem nenhum 
 ![Terminal](images/cli.png)
 
 ``` 
-  -i, --input       Local e o nome do arquivo (ex: documentos/dados.csv)  
-  -o, --output      Destino e o nome do arquivo. (padrão: dados_censurados.csv)  
-  -l, --level       Nível de censura dos dados.  
-                    default: padrão  
-                    high: alto  
-                    low: baixo  
-  -s, --sep         Separador do CSV. (padrão: vírgula)  
-  -r, --report      Exibe relatório de colunas com dados sensíveis detectados.  
+  -i, --input       Local e o nome do arquivo (ex: documentos/dados.csv)
+  -o, --output      Destino e o nome do arquivo. (padrão: dados_censurados.csv)
+  -l, --level       Nível de censura dos dados.
+                    default: padrão
+                    high: alto
+                    low: baixo
+  -s, --sep         Separador do CSV. (padrão: vírgula)
+  -r, --report      Exibe relatório de colunas com dados sensíveis detectados.
+  --cpf             Executa apenas para dados de CPF.
+  --email           Executa apenas para dados de E-Mail.
+  --phone           Executa apenas para dados de Telefone.
+  --detect          Apenas detecta os dados, sem mascarar.
   ```
+
+> Se nenhum de `--cpf`, `--email` ou `--phone` for informado, o sistema processa todos os tipos normalmente. Os filtros podem ser combinados (ex: `--cpf --email` processa apenas CPF e e-mail). O `--detect` funciona tanto no modo completo quanto com filtros.
 
 **Exemplo de comando completo:** `uv run main.py -i documentos/Relatório_de_Atendimento_de_RH_Saúde.csv -o documentos/relatorio_de_atendimento_de_rh_saude.csv -l high -r`  
 

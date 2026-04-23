@@ -8,6 +8,33 @@ Histórico de versões do anonbr.
 </div>
 <br>
 
+## v0.5.0 — Comandos isolados por tipo de dado e modo detecção
+
+Adição de filtros de tipo de dado (`--cpf`, `--email`, `--phone`) e modo detecção sem mascaramento (`--detect`) à CLI. Refatoração de `Anonymizer` e `PDFDetector` para aceitar o parâmetro `data_types`.
+
+<table>
+<thead>
+<tr>
+<th>Data</th>
+<th>Versão</th>
+<th>Tipo</th>
+<th>Resumo</th>
+<th>Detalhes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2026-04-22</td>
+<td>v0.5.0</td>
+<td>feat/refact</td>
+<td>Adicionar filtros de tipo de dado e modo detecção à CLI</td>
+<td>Adicionar argumentos <code>--cpf</code>, <code>--email</code> e <code>--phone</code> à CLI para executar o sistema isoladamente para um ou mais tipos de dado; adicionar argumento <code>--detect</code> para executar apenas a detecção sem mascarar os dados, tanto em modo completo quanto em modo filtrado; refatorar <code>Anonymizer</code> para aceitar <code>data_types</code> no construtor, inicializando apenas os detectores necessários e filtrando o relatório e a anonimização conforme os tipos ativos; refatorar <code>PDFDetector</code> para aceitar <code>data_types</code> no construtor, filtrando a property <code>patterns</code> e a ordem de aplicação em <code>_detect_in_text</code>, incluindo a segunda varredura de telefones separados por <code>/</code>; atualizar a string de uso (<code>usage</code>) do parser com os novos comandos.</td>
+</tr>
+</tbody>
+</table>
+
+---
+
 ## v0.4.0 — Centralização de padrões regex
 
 Extração dos padrões regex para um YAML centralizado, refatoração de todos os detectores para importar desse arquivo e suite de testes para o carregador de padrões.
