@@ -14,17 +14,13 @@ Identifica automaticamente os dados, destrói permanentemente a informação ori
 
 </div>
 
-> [!NOTE]
-> [**Contribua sem comprimisso**](/CONTRIBUTING.md), vamos escrever códigos bugados e debugar **em prol do desenvolvimento pessoal e profissional.** Sintam-se livres para contribuir implementando novas funcionalidades, relatando erros ou sugestões.  
-
-*Leia o [**CONTRIBUTING.md**](/CONTRIBUTING.md) para mais detalhes.*
-
 <br>
 
 A versão atual centraliza todos os padrões regex num único arquivo de configuração, o `config/patterns.yaml`, carregado pelo módulo `pattern_loader`. Isso significa que nenhum detector guarda strings de regex no próprio código: todos importam do mesmo lugar, facilitando ajustes e a adição de novos padrões sem precisar editar múltiplos arquivos. Se você quiser contribuir com um novo padrão ou variação de um padrão existente, esse é o único arquivo que precisa ser modificado para a parte de detecção.
 
 ***Todos os dados sensíveis expostos neste repositório são fictícios, gerados por IA como ilustração para exibição de testes.***
 
+*Leia o [**CONTRIBUTING.md**](/CONTRIBUTING.md) para mais detalhes.*
 
 ## SUMÁRIO  
 [**#1** - RESUMO DAS FUNCIONALIDADES E EXEMPLO DE MASCARAMENTO](#funcionalidades---resumo)  
