@@ -219,13 +219,13 @@ class PDFDetector:
         # Carrega os padrões ativos uma vez (a property já filtra por data_types)
         active_patterns = self.patterns
 
-        # Ordem de aplicação completa — do mais específico ao mais genérico.
+        # Ordem de aplicação completa, do mais específico ao mais genérico.
         # Só inclui as entradas cujo padrão existe no dict ativo (filtrado por data_types).
         full_pattern_order = [
-            ('cpf',   'cpf_formatted'),
-            ('cpf',   'cpf_unformatted'),
-            ('cnpj',  'cnpj_formatted'),
-            ('cnpj',  'cnpj_unformatted'),
+            ('cpf', 'cpf_formatted'),
+            ('cpf', 'cpf_unformatted'),
+            ('cnpj', 'cnpj_formatted'),
+            ('cnpj', 'cnpj_unformatted'),
             ('email', 'email'),
             ('phone', 'phone_international'),
             ('phone', 'phone_ddd_mobile'),
@@ -251,7 +251,7 @@ class PDFDetector:
                 bisect.insort(used_intervals, (start, end))
 
         # Segunda varredura: telefones separados por '/'
-        # Ex.: '21987654321/21876543210' — a barra pode quebrar o lookbehind (?<!\d)
+        # Ex.: '21987654321/21876543210', a barra pode quebrar o lookbehind (?<!\d)
         # e o segundo número não ser detectado na varredura anterior.
         # Só roda se 'phone' está nos tipos ativos.
         if 'phone_international' in active_patterns:
