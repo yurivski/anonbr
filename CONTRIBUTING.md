@@ -2,20 +2,10 @@
 
 O Anonbr tem como objetivo transformar dados sensíveis de formato padrão brasileiro para que documentos (atualmente apenas CSV) possam ser compartilhados de forma segura, sem exposição de dados pessoais, conforme a LGPD.
 
-> Contribua sem compromisso, **talvez isso se transforme em algo grande, talvez não**, o que importa é **praticar e estudar**. O projeto foi criado para estimular programadores de todos os níveis a praticarem **Python, testes, versionamento e boas praticas de engenharia de dados**, aplicados a um problema real: anonimizacao de dados pessoais no contexto brasileiro.
-
-***Contribuições de qualquer nível são bem-vindas, desde correção de typos até novos detectores.***
-
 ## Configurando o ambiente
 
-1. Faça um fork do repositório e clone localmente:
 
-```bash
-git clone https://github.com/seu-usuario/anonbr.git
-cd anonbr
-```
-
-2. Instale as dependências com uv:
+**Instale as dependências com uv:**
 
 ```bash
 uv sync --group dev 
@@ -23,13 +13,13 @@ uv sync --group dev
 
 Isso instala o projeto e as ferramentas de desenvolvimento (pytest, pytest-cov).
 
-3. Verifique que os testes passam antes de comecar:
+**Verifique que os testes passam antes de comecar:**
 
 ```bash
 uv run pytest tests/ -v
 ```
 
-ou, sem pyproject:
+ou, **sem pyproject:**
 
 ```bash
 # Crie e ative seu ambiente virtual
