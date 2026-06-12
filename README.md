@@ -12,11 +12,7 @@ Ferramenta Python para [censurar dados sensíveis em arquivos](#funcionalidades-
 
 Identifica automaticamente os dados, destrói permanentemente a informação original e substitui os caracteres destruídos com 'X' ou 'tarjas' dependendo do tipo do arquivo, preservando a estrutura original. A quantidade de caracteres revelados dependem de [três níveis de privacidade](/OUTPUT_EXEMPLE.md). 
 
-<<<<<<< HEAD
 </div>
-=======
-</div> 
->>>>>>> 4966649 (style: editar info)
 
 <br>
 
