@@ -1,6 +1,6 @@
 <div align="center">
   <picture>
-    <img alt="AnonBr-Icon" src="img/Anonbr_icon.png" width="130">
+    <img alt="AnonBr-Icon" src="https://raw.githubusercontent.com/yurivski/anonbr/main/img/Anonbr_icon.png" width="130">
   </picture>
 
 # Anonbr
