@@ -1,6 +1,7 @@
 <div align="center">
-
-<img src="images/Anonbr_icon.png" alt="Anonbr logo" width="130" align="absmiddle">&nbsp;&nbsp;
+  <picture>
+    <img alt="AnonBr-Icon" src="img/Anonbr_icon.png" width="130">
+  </picture>
 
 # Anonbr
 
@@ -60,7 +61,7 @@ Censura dados sensíveis em arquivos CSV e PDF sem quebrar a estrutura do arquiv
 
 ## Arquitetura do projeto  
 
-![Arquitetura do projeto](images/arquitetura_docs.png)
+![Arquitetura do projeto](img/arquitetura_docs.png)
 
 
 ## Como funciona a detecção
@@ -157,7 +158,7 @@ Para realizar a anonimização existe apenas um comando mínimo e obrigatório: 
 
 A lista de comandos irá aparecer no terminal caso execute o arquivo sem nenhum comando: `uv run main.py`
 
-![Terminal](images/cli.png)
+![Terminal](img/cli.png)
 
 ``` 
   -i, --input       Local e o nome do arquivo (ex: documentos/dados.csv)
@@ -180,7 +181,7 @@ A lista de comandos irá aparecer no terminal caso execute o arquivo sem nenhum 
 
 **Imagem do output:** 
 
-![Exemplo output](images/exemplo_output_csv.png)
+![Exemplo output](img/exemplo_output_csv.png)
 
 **Explicação:** O usuário inseriu o local e o nome da planilha de origem `documentos/Relatório_de_Atendimento_de_RH_Saúde.csv`, definiu o local e o nome da planilha de destino `documentos/relatorio_de_atendimento_de_rh_saude.csv`, definiu o nível de sencura `-l high` (alto), e escolheu exibir detalhes dos dados detectados no terminal `-r`. O diretório de destino será criado caso não exista.
 
